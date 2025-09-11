@@ -38,3 +38,5 @@ tempbin/
 
 .idea/
 .vscode
+
+Migrations/*
