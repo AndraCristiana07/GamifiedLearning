@@ -60,6 +60,15 @@ namespace Gamified_learning.Controllers
             {
                 // update user Xp
                 user.Xp += challenge.XpGained;
+
+                //check level
+                int newLevel = (user.Xp / 100) + 1;
+
+                // level up 
+                if (newLevel > user.Level)
+                {
+                    user.Level = newLevel;
+                }
                 // make user challange status challenge status and mark it as completed
                 var userChallengeStatus = new UserChallengeStatus
                 {
@@ -70,7 +79,7 @@ namespace Gamified_learning.Controllers
 
                 _context.UserChallengesStatus.Add(userChallengeStatus);
                 await _context.SaveChangesAsync();
-                return Ok(new { message = "Correct answer!", user.Xp });
+                return Ok(new { message = "Correct answer!", user.Xp, user.Level });
             }
             else
             {
