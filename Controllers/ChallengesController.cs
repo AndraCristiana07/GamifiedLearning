@@ -30,7 +30,21 @@ namespace Gamified_learning.Controllers
             _context.Challenges.Add(challenge);
             await _context.SaveChangesAsync();
             return Ok(new { message = "Challenge added" });
-        } 
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteChallenge(int id)
+        {
+            var challenge = await _context.Challenges.FindAsync(id);
+            if (challenge == null)
+            {
+                return NotFound();
+            }
+
+            _context.Challenges.Remove(challenge);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
 
         [HttpPost("complete")]
         public async Task<IActionResult> CompleteChallenge([FromBody] ChallengeStatusRequest request)
