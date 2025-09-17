@@ -37,7 +37,7 @@ namespace Gamified_learning.Controllers
             }
             
             // check if valid password
-            if (!isValidPassword(request.Password))
+            if (!IsValidPassword(request.Password))
             {
                 Console.WriteLine("Password must be at least 6 characters long, have at least one digit, have at least one special character and at least one uppercase letter");
                 return BadRequest("Password must be at least 6 characters long, have at least one digit, have at least one special character and at least one uppercase letter");
@@ -84,7 +84,7 @@ namespace Gamified_learning.Controllers
             return regex.IsMatch(email);
         }
 
-        bool isValidPassword(string password)
+        bool IsValidPassword(string password)
         {
             return password.Any(c => !char.IsLetterOrDigit(c)) && password.Length >= 6 && password.Any(c => !char.IsUpper(c)) && password.Any(c => char.IsDigit(c));
         }

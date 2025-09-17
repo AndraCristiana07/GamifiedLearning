@@ -32,6 +32,22 @@ namespace Gamified_learning.Controllers
             return Ok(new { message = "Challenge added" });
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateChallenge(int id, Challenge challenge)
+        {
+            if (id == challenge.ChallengeId)
+            {
+                // update challenge content
+                _context.Entry(challenge).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteChallenge(int id)
         {
@@ -101,6 +117,21 @@ namespace Gamified_learning.Controllers
                 return Ok(new { message = "Incorrect answer :( Try again!)" });
             }
         }
+
+
+        [HttpGet("category/{category}")]
+        public async Task<ActionResult<IEnumerable<Challenge>>> GetByCategory(string category)
+        {
+            return await _context.Challenges.Where(c => c.Category == category).ToListAsync();
+        }
+
+        [HttpGet("difficulty/{difficulty}")]
+          public async Task<ActionResult<IEnumerable<Challenge>>> GetByDifficulty(string difficulty)
+        {
+            return await _context.Challenges.Where(c => c.Difficulty == difficulty).ToListAsync();
+        }
+
+
     }
 
 }
