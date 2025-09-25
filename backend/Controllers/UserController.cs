@@ -8,7 +8,7 @@ namespace Gamified_learning.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    
+
     // // test API
     // public class TestController : ControllerBase
     // {
@@ -19,18 +19,18 @@ namespace Gamified_learning.Controllers
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _dbContext;
-    
+
         public UsersController(AppDbContext dbContext)
         {
             _dbContext = dbContext;
         }
-    
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _dbContext.Users.ToListAsync();
         }
-    
+
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -41,7 +41,7 @@ namespace Gamified_learning.Controllers
             }
             return user;
         }
-    
+
         [HttpPost]
         public async Task<ActionResult<User>> AddUser(User user)
         {
@@ -49,7 +49,7 @@ namespace Gamified_learning.Controllers
             await _dbContext.SaveChangesAsync();
             return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
         }
-    
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, User user)
         {
@@ -65,7 +65,7 @@ namespace Gamified_learning.Controllers
                 return BadRequest();
             }
         }
-    
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -74,10 +74,16 @@ namespace Gamified_learning.Controllers
             {
                 return NotFound();
             }
-            
+
             _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
             return NoContent();
+        }
+
+        [HttpGet("ordered")]
+        public async Task<ActionResult<IEnumerable<User>>> GetLeaderboard()
+        {
+            return await _dbContext.Users.OrderByDescending(u => u.Xp).Take(10).ToListAsync();
         }
     }
     
