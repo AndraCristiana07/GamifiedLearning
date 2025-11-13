@@ -132,6 +132,12 @@ namespace Gamified_learning.Controllers
         }
 
 
+        [HttpGet("categories")]
+        public async Task<ActionResult<IEnumerable<string>>> GetCategories()
+        {
+            return await _context.Challenges.Select(c => c.Category).Distinct().ToListAsync();
+
+        }
     }
 
 }
