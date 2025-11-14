@@ -1,10 +1,13 @@
 "use client";
+import {useRouter} from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
   const [user, setUser] = useState<any>(null);
   const [challenges, setChallenges] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     // TODO: get user data not just user 1
@@ -19,6 +22,10 @@ export default function Home() {
     fetch("http://localhost:5180/api/users/ordered")
       .then((res) => res.json())
       .then(setLeaderboard);
+
+    fetch("http://localhost:5180/api/challenges/categories")
+        .then((res) => res.json())
+        .then(setCategories);
   }, []);
 
   if (!user) return <p>Loading...</p>;
@@ -31,19 +38,20 @@ export default function Home() {
       </div>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">Available Challenges</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {challenges.map((c) => (
-            <div key={c.challengeId} className="p-4 bg-gray-800 rounded-lg">
-              <h3 className="font-semibold text-lg">{c.title}</h3>
-              <p className="text-gray-400">
-                {c.category} • {c.difficulty}
-              </p>
-              <p className="text-indigo-400">{c.xpGained} XP</p>
+        <h2 className="text-xl font-semibold mb-3">Available Categories</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {categories.map((cat) => (
+            <div
+                key={cat}
+                onClick={() => router.push(`/categories/${encodeURIComponent(cat)}`)}
+                className="p-6 bg-gray-800 hover:bg-gray-700 rounded-lg cursor-pointer transition"
+            >
+                <h3 className="text-lg font-bold capitalize">{cat}</h3>
+                <p className="text-gray-400 text-sm">Explore challenges in {cat}</p>
             </div>
-          ))}
+            ))}
         </div>
-      </section>
+        </section>
 
       <section>
         <h2 className="text-xl font-semibold mb-3">Leaderboard</h2>

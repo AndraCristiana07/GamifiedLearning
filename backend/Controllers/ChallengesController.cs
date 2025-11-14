@@ -32,6 +32,17 @@ namespace Gamified_learning.Controllers
             return Ok(new { message = "Challenge added" });
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Challenge>> GetChallenge(int id)
+        {
+            var challenge = await _context.Challenges.FindAsync(id);
+            if (challenge == null)
+            {
+                return NotFound();
+            }
+            return challenge;
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateChallenge(int id, Challenge challenge)
         {
@@ -119,10 +130,24 @@ namespace Gamified_learning.Controllers
         }
 
 
+        // [HttpGet("category/{category}")]
+        // public async Task<ActionResult<IEnumerable<Challenge>>> GetByCategory(string category)
+        // {
+        //     return await _context.Challenges.Where(c => c.Category == category).ToListAsync();
+        // }
+
         [HttpGet("category/{category}")]
-        public async Task<ActionResult<IEnumerable<Challenge>>> GetByCategory(string category)
+        public async Task<ActionResult<IEnumerable<Challenge>>> GetChallengesByCategory(string category)
         {
-            return await _context.Challenges.Where(c => c.Category == category).ToListAsync();
+            var decodedCategory = Uri.UnescapeDataString(category);
+            var challenges = await _context.Challenges
+                .Where(c => c.Category.ToLower() == decodedCategory.ToLower())
+                .ToListAsync();
+
+            if (challenges.Count == 0)
+                return NotFound("No challenges found for this category.");
+
+            return challenges;
         }
 
         [HttpGet("difficulty/{difficulty}")]
@@ -138,6 +163,44 @@ namespace Gamified_learning.Controllers
             return await _context.Challenges.Select(c => c.Category).Distinct().ToListAsync();
 
         }
+
+
+        [HttpPost("{id}/submit")]
+        public async Task<IActionResult> SubmitChallenge(int id, [FromBody] ChallengeStatusRequest request)
+        {
+            if (id != request.ChallengeId)
+                return BadRequest("Challenge ID mismatch.");
+
+            var challenge = await _context.Challenges.FindAsync(id);
+            var user = await _context.Users.FindAsync(request.UserId);
+
+            if (challenge == null || user == null)
+                return NotFound("Challenge or user not found.");
+
+            if (challenge.CorrectAnswer.Trim().ToLower() == request.Answer.Trim().ToLower())
+            {
+                // check if user completed challenge
+                var alreadyDone = await _context.UserChallengesStatus
+                    .AnyAsync(uc => uc.UserId == user.UserId && uc.ChallengeId == id);
+                if (alreadyDone)
+                    return BadRequest(new { message = "You already completed this challenge." });
+
+            
+                user.Xp += challenge.XpGained;
+                _context.UserChallengesStatus.Add(new UserChallengeStatus
+                {
+                    UserId = user.UserId,
+                    ChallengeId = id,
+                    Completed = true,
+                });
+
+                await _context.SaveChangesAsync();
+                return Ok(new { message = "Correct! XP awarded." });
+            }
+
+            return BadRequest(new { message = "Incorrect answer." });
+        }
+
     }
 
 }
