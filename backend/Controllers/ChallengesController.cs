@@ -137,17 +137,25 @@ namespace Gamified_learning.Controllers
         // }
 
         [HttpGet("category/{category}")]
-        public async Task<ActionResult<IEnumerable<Challenge>>> GetChallengesByCategory(string category)
+        public async Task<ActionResult<IEnumerable<ChallengeWithStatus>>> GetChallengesByCategory(string category, [FromQuery] int userId)
         {
             var decodedCategory = Uri.UnescapeDataString(category);
             var challenges = await _context.Challenges
                 .Where(c => c.Category.ToLower() == decodedCategory.ToLower())
+                .Select(c => new {
+                    c.ChallengeId,
+                    c.Title,
+                    c.Question,
+                    c.XpGained,
+                    c.Difficulty,
+                    Completed = _context.UserChallengesStatus.Any(uc => uc.ChallengeId == c.ChallengeId && uc.UserId == userId)
+                })
                 .ToListAsync();
 
             if (challenges.Count == 0)
                 return NotFound("No challenges found for this category.");
 
-            return challenges;
+            return Ok(challenges);
         }
 
         [HttpGet("difficulty/{difficulty}")]
@@ -195,8 +203,8 @@ namespace Gamified_learning.Controllers
                 });
 
                 await _context.SaveChangesAsync();
-                return Ok(new { message = "Correct! XP awarded." });
-            }
+                return Ok(new { message = "Correct! XP awarded.", user = new {user.UserId, user.Username, user.Xp, user.Level}});
+            }}
 
             return BadRequest(new { message = "Incorrect answer." });
         }
