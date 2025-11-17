@@ -42,8 +42,25 @@ export default function ProfilePage() {
           ))}
         </div>
       </section>
+      <section>
+        <h2 className="text-xl font-semibold mb-3">Recent Activity</h2>
 
-     
+        <div className="space-y-3">
+          {profile.recentChallenges.map((c: any, i: number) => (
+            <div key={i} className="bg-gray-800 p-4 rounded-lg">
+              <div className="flex justify-between">
+                <p className="font-semibold">{c.title}</p>
+                <p className="text-indigo-400">{c.xpGained} XP</p>
+              </div>
+              <p className="text-gray-400 text-sm">{c.category}</p>
+              <p className="text-gray-500 text-sm">
+                Completed: {new Date(c.completedAt).toLocaleString()}
+              </p>
+            </div>
+          ))}
+        </div>
+      </section>
+
     </div>
   );
 }

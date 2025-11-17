@@ -200,6 +200,7 @@ namespace Gamified_learning.Controllers
                     UserId = user.UserId,
                     ChallengeId = id,
                     Completed = true,
+                    CompletedAt = DateTime.UtcNow
                 });
 
                 await _context.SaveChangesAsync();
@@ -207,6 +208,25 @@ namespace Gamified_learning.Controllers
             }
 
             return BadRequest(new { message = "Incorrect answer." });
+        }
+
+        [HttpGet("{userId}/recent")]
+        public async Task<ActionResult<IEnumerable<object>>> GetRecentChallenges(int userId)
+        {
+            var recent = await _context.UserChallengesStatus
+                .Where(uc => uc.UserId == userId && uc.Completed)
+                .OrderByDescending(uc => uc.CompletedAt)
+                .Take(10)
+                .Select(uc => new {
+                    uc.CompletedAt,
+                    uc.Challenge.Title,
+                    uc.Challenge.Category,
+                    uc.Challenge.Difficulty,
+                    uc.Challenge.XpGained
+                })
+                .ToListAsync();
+
+            return Ok(recent);
         }
 
     }

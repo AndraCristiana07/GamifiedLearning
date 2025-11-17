@@ -110,7 +110,17 @@ namespace Gamified_learning.Controllers
                     .Select(g => new {
                         Category = g.Key,
                         Count = g.Count()
+                    }),
+                RecentChallenges = completed
+                    .OrderByDescending(c => c.CompletedAt)
+                    .Take(10)
+                    .Select(c => new {
+                        c.Challenge.Title,
+                        c.Challenge.Category,
+                        c.Challenge.XpGained,
+                        c.CompletedAt
                     })
+
             };
 
             return Ok(profile);
