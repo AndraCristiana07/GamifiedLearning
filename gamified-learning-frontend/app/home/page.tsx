@@ -33,7 +33,12 @@ export default function Home() {
   return (
     <div className="p-6 text-white space-y-8">
       <div>
-        <h1 className="text-3xl font-bold">Welcome back, {user.username} </h1>
+        <div className="flex justify-between items-center w-full">
+          <h1 className="p-4 text-3xl font-bold">Welcome back, {user.username} </h1>
+          <h2 className="p-4 text-3xl font-semibold cursor-pointer" 
+              onClick={() => router.push(`/profile`)}
+          >Profile</h2>
+        </div>
         <p>Level {user.level} • {user.xp} XP</p>
       </div>
 

@@ -85,6 +85,36 @@ namespace Gamified_learning.Controllers
         {
             return await _dbContext.Users.OrderByDescending(u => u.Xp).Take(10).ToListAsync();
         }
+
+        [HttpGet("{id}/profile")]
+        public async Task<ActionResult> GetUserProfile(int id)
+        {
+            var user = await _dbContext.Users.FindAsync(id);
+            if (user == null) return NotFound();
+
+            var completed = await _dbContext.UserChallengesStatus
+                .Where(u => u.UserId == id)
+                .Include(u => u.Challenge)
+                .ToListAsync();
+
+            var profile = new 
+            {
+                user.UserId,
+                user.Username,
+                user.Email,
+                user.Level,
+                user.Xp,
+                TotalCompleted = completed.Count,
+                CategoryStats = completed
+                    .GroupBy(c => c.Challenge.Category)
+                    .Select(g => new {
+                        Category = g.Key,
+                        Count = g.Count()
+                    })
+            };
+
+            return Ok(profile);
+        }
     }
     
 }

@@ -6,5 +6,8 @@ namespace Gamified_learning.Models
         public int UserId { get; set; }
         public int ChallengeId { get; set; }
         public bool Completed { get; set; } = false;
+
+        public User User { get; set; }
+        public Challenge Challenge { get; set; }
     }
 }

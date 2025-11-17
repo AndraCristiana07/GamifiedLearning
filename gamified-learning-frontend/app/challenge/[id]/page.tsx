@@ -7,7 +7,7 @@ export default function ChallengePage() {
   const [challenge, setChallenge] = useState<any>(null);
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState<string | null>(null);
-  const [user, setUser] = useState<any>(null)
+  // const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
     fetch(`http://localhost:5180/api/challenges/${id}`)
@@ -32,9 +32,9 @@ export default function ChallengePage() {
     console.log(data)
     if (res.ok) {
       setResult(data.message || "Correct!");
-      if (data.user){
-        setUser(data.user)
-      }
+      // if (data.user){
+      //   setUser(data.user)
+      // }
     } else {
       setResult("Incorrect answer. Try again!");
 

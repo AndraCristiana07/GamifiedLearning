@@ -203,8 +203,8 @@ namespace Gamified_learning.Controllers
                 });
 
                 await _context.SaveChangesAsync();
-                return Ok(new { message = "Correct! XP awarded.", user = new {user.UserId, user.Username, user.Xp, user.Level}});
-            }}
+                return Ok(new { message = "Correct! XP awarded." });
+            }
 
             return BadRequest(new { message = "Incorrect answer." });
         }

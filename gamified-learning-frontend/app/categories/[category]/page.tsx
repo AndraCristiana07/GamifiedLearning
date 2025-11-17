@@ -9,7 +9,6 @@ export default function CategoryPage(){
     const [challenges, setChallenges] = useState([]);
     const router = useRouter();
     
-   
 
    useEffect(() => {
     const userId = 1;
