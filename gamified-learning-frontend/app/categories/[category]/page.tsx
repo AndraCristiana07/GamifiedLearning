@@ -10,12 +10,12 @@ export default function CategoryPage(){
     const router = useRouter();
     
 
-   useEffect(() => {
-    const userId = 1;
-    fetch(`http://localhost:5180/api/challenges/category/${encodeURIComponent(category as string)}?userId=${userId}`)
-        .then((res) => res.json())
-        .then(setChallenges);
-}, [category]);
+    useEffect(() => {
+        const userId = 1;
+        fetch(`http://localhost:5180/api/challenges/category/${encodeURIComponent(category as string)}?userId=${userId}`)
+            .then((res) => res.json())
+            .then(setChallenges);
+    }, [category]);
 
     return (
         <div className="p-6 text-white">
@@ -35,7 +35,15 @@ export default function CategoryPage(){
                     <p className="text-gray-400">{c.difficulty}</p>
                     <p className="text-indigo-400">{c.xpGained} XP</p>
                     {c.completed ? (
-                        <p className="text-green-400 font-bold mt-3">✓ Completed</p>
+                        <div>
+                            <p className="text-green-400 font-bold mt-3">✓ Completed</p>
+                            <button
+                                onClick={() => router.push(`/challenge/${c.challengeId}`)}
+                                className="mt-3 bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1 rounded"
+                            >
+                                Retry Challenge
+                            </button>
+                        </div>
                     ) : (
                         <button
                             onClick={() => router.push(`/challenge/${c.challengeId}`)}

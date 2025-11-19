@@ -8,6 +8,7 @@ namespace Gamified_learning.Models
         public int XpGained { get; set; }
         public string CorrectAnswer { get; set; } = string.Empty;
 
+        public string Type { get; set; } = "Text";
         public string Category { get; set; } = "General";
         public string Difficulty { get; set; } = "Easy";
     }

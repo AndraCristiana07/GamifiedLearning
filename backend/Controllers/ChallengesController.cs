@@ -190,8 +190,11 @@ namespace Gamified_learning.Controllers
                 // check if user completed challenge
                 var alreadyDone = await _context.UserChallengesStatus
                     .AnyAsync(uc => uc.UserId == user.UserId && uc.ChallengeId == id);
-                if (alreadyDone)
-                    return BadRequest(new { message = "You already completed this challenge." });
+                if (alreadyDone){
+                    return Ok(new { message = "Correct again!"});
+                    
+                }
+                    // return BadRequest(new { message = "You already completed this challenge." });
 
             
                 user.Xp += challenge.XpGained;
