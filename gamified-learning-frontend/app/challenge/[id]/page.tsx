@@ -12,7 +12,6 @@ export default function ChallengePage() {
   const [language, setLanguage] = useState("csharp");
   const [output, setOutput] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
-  // const [user, setUser] = useState<any>(null)
 
 
   function handleEditorChange(value: string|undefined){
@@ -25,7 +24,6 @@ export default function ChallengePage() {
       .then(setChallenge);
   }, [id]);
 
-  // console.log("aaaaaaa",id)
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const res = await fetch(`http://localhost:5180/api/challenges/${id}/submit`, {
@@ -42,9 +40,6 @@ export default function ChallengePage() {
     console.log(data)
     if (res.ok) {
       setResult(data.message || "Correct!");
-      // if (data.user){
-      //   setUser(data.user)
-      // }
     } else {
       setResult("Incorrect answer. Try again!");
 

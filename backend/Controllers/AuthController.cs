@@ -54,7 +54,6 @@ namespace Gamified_learning.Controllers
                 Level = 1
             };
             
-            // user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return Ok(new {message = "User created successfully"});

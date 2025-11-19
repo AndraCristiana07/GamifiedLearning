@@ -124,17 +124,9 @@ namespace Gamified_learning.Controllers
             }
             else
             {
-                // TODO: maybe make user challange status and set complete to false? 
                 return Ok(new { message = "Incorrect answer :( Try again!)" });
             }
         }
-
-
-        // [HttpGet("category/{category}")]
-        // public async Task<ActionResult<IEnumerable<Challenge>>> GetByCategory(string category)
-        // {
-        //     return await _context.Challenges.Where(c => c.Category == category).ToListAsync();
-        // }
 
         [HttpGet("category/{category}")]
         public async Task<ActionResult<IEnumerable<ChallengeWithStatus>>> GetChallengesByCategory(string category, [FromQuery] int userId)
@@ -194,8 +186,6 @@ namespace Gamified_learning.Controllers
                     return Ok(new { message = "Correct again!"});
                     
                 }
-                    // return BadRequest(new { message = "You already completed this challenge." });
-
             
                 user.Xp += challenge.XpGained;
                 _context.UserChallengesStatus.Add(new UserChallengeStatus

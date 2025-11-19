@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 
 export default function ProfilePage() {
   const [profile, setProfile] = useState<any>(null);
-//   const userId = typeof window !== "undefined" ? localStorage.getItem("userId") : null;
   const userId = 1;
 
   useEffect(() => {

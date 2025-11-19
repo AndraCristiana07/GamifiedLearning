@@ -9,13 +9,6 @@ namespace Gamified_learning.Controllers
     [ApiController]
     [Route("api/[controller]")]
 
-    // // test API
-    // public class TestController : ControllerBase
-    // {
-    //     [HttpGet]
-    //     public string Hello() => "Hello World";
-    // }
-
     public class UsersController : ControllerBase
     {
         private readonly AppDbContext _dbContext;
