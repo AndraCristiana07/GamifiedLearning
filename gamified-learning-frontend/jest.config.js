@@ -4,8 +4,11 @@
  * https://jestjs.io/docs/configuration
  */
 
-
-/** @type {import('jest').Config} */
+const nextJest = require('next/jest');
+const createJestConfig = nextJest({
+  dir: './',
+})
+// /** @type {import('jest').Config} */
 const config = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
@@ -140,7 +143,7 @@ const config = {
   // setupFiles: [],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  // setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
 
   // The number of seconds after which a test is considered as slow and reported as such in the results.
   // slowTestThreshold: 5,
@@ -200,4 +203,4 @@ const config = {
   // watchman: true,
 };
 
-export default config;
+module.exports = createJestConfig(config);
