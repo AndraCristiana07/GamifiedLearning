@@ -3,10 +3,18 @@ import { useState, useEffect } from "react"
 import { useParams} from "next/navigation";
 import {useRouter} from "next/navigation";
 
+interface Challenge {
+  challengeId: number;
+  title: string;
+  difficulty: string;
+  xpGained: number;
+  completed: boolean;
+}
+
 export default function CategoryPage(){
     
     const {category} = useParams();
-    const [challenges, setChallenges] = useState([]);
+    const [challenges, setChallenges] = useState<Challenge[]>([]);
     const router = useRouter();
     
 

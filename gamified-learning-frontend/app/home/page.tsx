@@ -2,10 +2,21 @@
 import {useRouter} from "next/navigation";
 import { useEffect, useState } from "react";
 
+interface UserData {
+  username: string;
+  level: number;
+  xp: number;
+}
+
+interface LeaderboardUser {
+  userId: number;
+  username: string;
+  xp: number;
+}
 export default function Home() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserData | null>(null);
   const [challenges, setChallenges] = useState([]);
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardUser[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const router = useRouter();
 

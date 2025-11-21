@@ -5,7 +5,7 @@ export default function LoginPage(){
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const handleSubmit = async (e: React.FormEvent) =>{
         e.preventDefault();
@@ -25,10 +25,12 @@ export default function LoginPage(){
 
             const data = await res.json();
             console.log("Login successful ", data);
-
-        } catch (err) {
-            console.error("Login error ", err);
-            setError(err.message || "Login error");
+        } catch (err: unknown) { 
+        if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError("An unknown error occurred:");
+        }
         } finally {
             setLoading(false);
         }
@@ -67,7 +69,7 @@ export default function LoginPage(){
             </form>
 
             <p className="mt-10 text-center text-sm/6 text-gray-400">
-            Don't have an account? 
+            Do not have an account? 
             <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300"> Register now!</a>
             </p>
         </div>

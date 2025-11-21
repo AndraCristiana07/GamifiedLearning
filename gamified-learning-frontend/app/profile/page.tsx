@@ -1,8 +1,30 @@
 "use client";
 import { useEffect, useState } from "react";
 
+interface CategoryStat {
+  category: string;
+  count: number;
+}
+
+interface RecentChallenge {
+  title: string;
+  xpGained: number;
+  category: string;
+  completedAt: string;
+}
+
+interface Profile {
+  username: string;
+  email: string;
+  level: number;
+  xp: number;
+  totalCompleted: number;
+  categoryStats: CategoryStat[];
+  recentChallenges: RecentChallenge[];
+}
+
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
   const userId = 1;
 
   useEffect(() => {
@@ -33,7 +55,7 @@ export default function ProfilePage() {
             <p className="text-gray-400 text-sm">Challenges Completed</p>
           </div>
 
-          {profile.categoryStats.map((c: any) => (
+          {profile.categoryStats.map((c) => (
             <div key={c.category} className="bg-gray-800 p-4 rounded-lg text-center">
               <p className="text-xl font-bold">{c.count}</p>
               <p className="text-gray-400 text-sm">{c.category}</p>
@@ -45,7 +67,7 @@ export default function ProfilePage() {
         <h2 className="text-xl font-semibold mb-3">Recent Activity</h2>
 
         <div className="space-y-3">
-          {profile.recentChallenges.map((c: any, i: number) => (
+          {profile.recentChallenges.map((c, i) => (
             <div key={i} className="bg-gray-800 p-4 rounded-lg">
               <div className="flex justify-between">
                 <p className="font-semibold">{c.title}</p>

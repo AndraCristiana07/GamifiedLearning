@@ -6,7 +6,8 @@ export default function LoginPage(){
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<string | null>(null);
+
     const [success, setSuccess] = useState('')
     
     const handleSubmit = async (e: React.FormEvent) =>{
@@ -32,9 +33,12 @@ export default function LoginPage(){
             setEmail('')
             setPassword('')
 
-        } catch (err) {
-            console.error("Register error ", err);
-            setError(err.message || "Register error");
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+            setError(err.message);
+        } else {
+            setError("An unknown error occurred:");
+        }
         } 
     }
     return (

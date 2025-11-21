@@ -2,17 +2,26 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Editor from '@monaco-editor/react';
-import { stdin } from "process";
+
+interface Challenge {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  xp: number;
+  question: string;
+  type: string;
+}
+
 
 export default function ChallengePage() {
   const { id } = useParams();
-  const [challenge, setChallenge] = useState<any>(null);
+  const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [answer, setAnswer] = useState("");
   const [result, setResult] = useState<string | null>(null);
   const [language, setLanguage] = useState("csharp");
-  const [output, setOutput] = useState<string | null>(null);
-  const [running, setRunning] = useState(false);
-
+  // const [output, setOutput] = useState<string | null>(null);
+  const [running, setRunning] = useState<boolean>(false);
 
   function handleEditorChange(value: string|undefined){
     setAnswer(value ?? "")
@@ -24,6 +33,7 @@ export default function ChallengePage() {
       .then(setChallenge);
   }, [id]);
 
+  console.log("aaaaaaa",id)
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const res = await fetch(`http://localhost:5180/api/challenges/${id}/submit`, {
@@ -40,6 +50,7 @@ export default function ChallengePage() {
     console.log(data)
     if (res.ok) {
       setResult(data.message || "Correct!");
+
     } else {
       setResult("Incorrect answer. Try again!");
 
