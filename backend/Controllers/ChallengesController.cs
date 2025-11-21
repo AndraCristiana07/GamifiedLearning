@@ -164,43 +164,233 @@ namespace Gamified_learning.Controllers
 
         }
 
+        // [HttpPost("{id}/submit")]
+        // public async Task<IActionResult> SubmitChallenge(int id, [FromBody] ChallengeStatusRequest request)
+        // {
+        //     if (id != request.ChallengeId)
+        //         return BadRequest(new { message = "Challenge ID mismatch." });
+
+        //     var challenge = await _context.Challenges.FindAsync(id);
+        //     var user = await _context.Users.FindAsync(request.UserId);
+
+        //     if (challenge == null || user == null)
+        //         return NotFound(new { message = "Challenge or user not found." });
+
+        //     // answer is text
+        //     if (challenge.Type == "Text")
+        //     {
+        //         bool correct = challenge.CorrectAnswer.Trim().ToLower() ==
+        //                     request.Answer.Trim().ToLower();
+
+        //         if (!correct)
+        //             return BadRequest(new { message = "Incorrect answer." });
+
+        //         return await HandleSuccess(user, challenge);
+        //     }
+
+        //     // answer is code
+        //     if (challenge.Type == "Code")
+        //     {
+        //         if (string.IsNullOrWhiteSpace(request.Language))
+        //             return BadRequest(new { message = "Language is required for code challenges." });
+
+        //         // forward to Judge0 
+        //         var runResult = await ExecuteCode(request.Language, request.Answer);
+
+        //         if (runResult == null)
+        //             return BadRequest(new { message = "Code execution failed." });
+
+        //         // check if correct answer
+        //         if (runResult.Output.Trim() != challenge.CorrectAnswer.Trim())
+        //         {
+        //             return BadRequest(new { message = "Incorrect output." });
+        //         }
+
+        //         return await HandleSuccess(user, challenge);
+        //     }
+
+        //     return BadRequest(new { message = "Unknown challenge type." });
+        // }
+
+
+        // private async Task<IActionResult> HandleSuccess(User user, Challenge challenge)
+        // {
+        //     // check if already solved
+        //     bool alreadyDone = await _context.UserChallengesStatus
+        //         .AnyAsync(u => u.UserId == user.UserId && u.ChallengeId == challenge.ChallengeId);
+
+        //     if (alreadyDone)
+        //         return Ok(new { message = "Correct again!" });
+
+        //     // award XP
+        //     user.Xp += challenge.XpGained;
+
+        //     _context.UserChallengesStatus.Add(new UserChallengeStatus
+        //     {
+        //         UserId = user.UserId,
+        //         ChallengeId = challenge.ChallengeId,
+        //         Completed = true,
+        //         CompletedAt = DateTime.UtcNow
+        //     });
+
+        //     await _context.SaveChangesAsync();
+        //     return Ok(new { message = "Correct! XP awarded." });
+        // }
+
+        // private async Task<ExecutionResult?> ExecuteCode(string language, string code, string stdin="")
+        // {
+        //     using var http = new HttpClient();
+
+        //      int languageId = language.ToLower() switch
+        //     {
+        //         "python" => 71,
+        //         "javascript" => 63,
+        //         "csharp" => 51,
+        //         "cpp" => 76,
+        //         _ => 51
+        //     };
+
+        //     var payload = new
+        //     {
+        //         language_id = languageId,
+        //         source_code = code,
+        //         stdin = stdin
+        //     };
+
+        //     string judge0Url = "http://localhost:2358/submissions?base64_encoded=false&wait=true";
+
+        //     var response = await http.PostAsJsonAsync(judge0Url, payload);
+
+        //     if (!response.IsSuccessStatusCode)
+        //         return StatusCode((int)response.StatusCode, "Judge0 request failed");
+
+        //     var result = await response.Content.ReadFromJsonAsync<CodeExecutionResult>();
+
+        //     return Ok(new
+        //     {
+        //         output = result?.Stdout
+        //             ?? result?.Stderr
+        //             ?? result?.Output
+        //             ?? "No output"
+        //     });
+        //     // var response = await http.PostAsJsonAsync("http://localhost:5180/api/code/execute",
+        //     //     new { language, answer = code });
+
+        //     // if (!response.IsSuccessStatusCode)
+        //     //     return null;
+
+        //     // var data = await response.Content.ReadFromJsonAsync<ExecutionResult>();
+        //     // return data!;
+        // }
+
 
         [HttpPost("{id}/submit")]
         public async Task<IActionResult> SubmitChallenge(int id, [FromBody] ChallengeStatusRequest request)
         {
             if (id != request.ChallengeId)
-                return BadRequest("Challenge ID mismatch.");
+                return BadRequest(new { message = "Challenge ID mismatch." });
 
             var challenge = await _context.Challenges.FindAsync(id);
             var user = await _context.Users.FindAsync(request.UserId);
 
             if (challenge == null || user == null)
-                return NotFound("Challenge or user not found.");
+                return NotFound(new { message = "Challenge or user not found." });
 
-            if (challenge.CorrectAnswer.Trim().ToLower() == request.Answer.Trim().ToLower())
+            // answer is text
+            if (challenge.Type == "Text")
             {
-                // check if user completed challenge
-                var alreadyDone = await _context.UserChallengesStatus
-                    .AnyAsync(uc => uc.UserId == user.UserId && uc.ChallengeId == id);
-                if (alreadyDone){
-                    return Ok(new { message = "Correct again!"});
-                    
-                }
-            
-                user.Xp += challenge.XpGained;
-                _context.UserChallengesStatus.Add(new UserChallengeStatus
-                {
-                    UserId = user.UserId,
-                    ChallengeId = id,
-                    Completed = true,
-                    CompletedAt = DateTime.UtcNow
-                });
+                bool correct = challenge.CorrectAnswer.Trim().ToLower() ==
+                            request.Answer.Trim().ToLower();
 
-                await _context.SaveChangesAsync();
-                return Ok(new { message = "Correct! XP awarded." });
+                if (!correct)
+                    return BadRequest(new { message = "Incorrect answer." });
+
+                return await HandleSuccess(user, challenge);
             }
 
-            return BadRequest(new { message = "Incorrect answer." });
+            // answer is code
+            if (challenge.Type == "Code")
+            {
+                if (string.IsNullOrWhiteSpace(request.Language))
+                    return BadRequest(new { message = "Language is required for code challenges." });
+
+                var runResult = await ExecuteCode(request.Language, request.Answer);
+
+                if (runResult == null)
+                    return BadRequest(new { message = "Code execution failed." });
+
+                if (runResult.Output.Trim() != challenge.CorrectAnswer.Trim())
+                    return BadRequest(new { message = "Incorrect output." });
+
+                return await HandleSuccess(user, challenge);
+            }
+
+            return BadRequest(new { message = "Unknown challenge type." });
+        }
+
+        private async Task<IActionResult> HandleSuccess(User user, Challenge challenge)
+        {
+            bool alreadyDone = await _context.UserChallengesStatus
+                .AnyAsync(u => u.UserId == user.UserId && u.ChallengeId == challenge.ChallengeId);
+
+            if (alreadyDone)
+                return Ok(new { message = "Correct again!" });
+
+            user.Xp += challenge.XpGained;
+
+            _context.UserChallengesStatus.Add(new UserChallengeStatus
+            {
+                UserId = user.UserId,
+                ChallengeId = challenge.ChallengeId,
+                Completed = true,
+                CompletedAt = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Correct! XP awarded." });
+        }
+
+        private async Task<ExecutionResult?> ExecuteCode(string language, string code, string stdin = "")
+        {
+            using var http = new HttpClient();
+
+            int languageId = language.ToLower() switch
+            {
+                "python" => 71,
+                "javascript" => 63,
+                "csharp" => 51,
+                "cpp" => 76,
+                _ => 51
+            };
+
+            var payload = new
+            {
+                language_id = languageId,
+                source_code = code,
+                stdin = stdin
+            };
+
+            string judge0Url = "http://localhost:2358/submissions?base64_encoded=false&wait=true";
+
+            var response = await http.PostAsJsonAsync(judge0Url, payload);
+
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var result = await response.Content.ReadFromJsonAsync<CodeExecutionResult>();
+
+            return new ExecutionResult
+            {
+                Output = result?.Stdout ?? result?.Stderr ?? result?.Output ?? "No output"
+            };
+        }
+
+
+
+
+        public class ExecutionResult
+        {
+            public string Output { get; set; } = "";
         }
 
         [HttpGet("{userId}/recent")]
