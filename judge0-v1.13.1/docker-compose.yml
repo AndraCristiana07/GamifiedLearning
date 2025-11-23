@@ -8,6 +8,7 @@ x-logging:
 services:
   server:
     image: judge0/judge0:1.13.1
+    command: ["bash", "-c", "sudo mkdir -p /box && sudo chmod 1777 /box && exec ./scripts/server"]
     volumes:
       - ./judge0.conf:/judge0.conf:ro
     ports:
@@ -18,7 +19,7 @@ services:
 
   workers:
     image: judge0/judge0:1.13.1
-    command: ["./scripts/workers"]
+    command: ["bash", "-c", "sudo mkdir -p /box && sudo chmod 1777 /box && exec ./scripts/workers"]
     volumes:
       - ./judge0.conf:/judge0.conf:ro
     privileged: true
