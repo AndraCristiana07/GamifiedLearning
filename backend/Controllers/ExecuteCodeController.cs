@@ -25,16 +25,20 @@ public class ExecuteCodeController : ControllerBase
             _ => 51
         };
 
-        var payload = new
+        var payload = new Dictionary<string, string>
         {
-            language_id = languageId,
-            source_code = req.Answer,
-            stdin = ""
+            { "language_id", languageId.ToString() },
+            { "source_code", req.Answer },
+            { "stdin", "" }
         };
+
+        var jsonContent = JsonContent.Create(payload);
+
+        await jsonContent.LoadIntoBufferAsync(); // avoid chunked encoding
 
         string judge0Url = "http://localhost:2358/submissions?base64_encoded=false&wait=true";
 
-        var response = await _http.PostAsJsonAsync(judge0Url, payload);
+        var response = await _http.PostAsync(judge0Url, jsonContent);
 
         if (!response.IsSuccessStatusCode)
             return StatusCode((int)response.StatusCode, "Judge0 request failed");
