@@ -309,6 +309,18 @@ namespace Gamified_learning.Controllers
             return Ok(recent);
         }
 
+        [HttpPost("bulk")]
+        public async Task<IActionResult> BulkAddChallenges([FromBody] List<Challenge> challenges)
+        {
+            if (challenges == null || challenges.Count == 0)
+                return BadRequest("No challenges provided.");
+
+            _context.Challenges.AddRange(challenges);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = $"{challenges.Count} challenges added successfully!" });
+        }
+
     }
 
 }

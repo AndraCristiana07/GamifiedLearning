@@ -1,0 +1,68 @@
+[
+    {
+        "challengeId": 1,
+        "title": "Sum of Two Numbers (Python)",
+        "question": "Write a program that reads two integers from Input and prints their sum.\n\nHint: Use Input().split() to separate inputs.",
+        "xpGained": 10,
+        "type": "Code",
+        "category": "Python",
+        "difficulty": "Easy",
+        "correctAnswer": "",
+        "testCasesJson": "[ { \"Input\": \"3 4\", \"Expected\": \"7\" }, { \"Input\": \"1 2\", \"Expected\": \"3\" } ]"
+    },
+    {
+        "challengeId": 2,
+        "title": "Compare Two Numbers (Python)",
+        "question": "Read two numbers and print 'greater', 'less', or 'equal'.\n\nHint: Convert inputs to int using int().",
+        "xpGained": 15,
+        "type": "Code",
+        "category": "Python",
+        "difficulty": "Easy",
+        "correctAnswer": "",
+        "testCasesJson": "[ { \"Input\": \"3 4\", \"Expected\": \"less\" }, { \"Input\": \"4 4\", \"Expected\": \"equal\" }, { \"Input\": \"10 2\", \"Expected\": \"greater\" } ]"
+    },
+    {
+        "challengeId": 3,
+        "title": "C# — Multiply Two Numbers",
+        "question": "Write a C# program that multiplies two integers read from stdin.\n\nHint: Use Console.ReadLine() and string.Split().",
+        "xpGained": 10,
+        "type": "Code",
+        "category": "CSharp",
+        "difficulty": "Easy",
+        "correctAnswer": "",
+        "testCasesJson": "[ { \"Input\": \"2 3\", \"Expected\": \"6\" }, { \"Input\": \"5 5\", \"Expected\": \"25\" } ]"
+    },
+    {
+        "challengeId": 4,
+        "title": "C# — Even or Odd",
+        "question": "Read an integer and print 'even' or 'odd'.\n\nHint: Use modulo operator: number % 2.",
+        "xpGained": 12,
+        "type": "Code",
+        "category": "CSharp",
+        "difficulty": "Easy",
+        "correctAnswer": "",
+        "testCasesJson": "[ { \"Input\": \"3\", \"Expected\": \"odd\" }, { \"Input\": \"10\", \"Expected\": \"even\" } ]"
+    },
+    {
+        "challengeId": 5,
+        "title": "Python — Calculate Area of Rectangle",
+        "question": "Given width and height, print the area.\n\nHint: width * height",
+        "xpGained": 10,
+        "type": "Code",
+        "category": "Python",
+        "difficulty": "Easy",
+        "correctAnswer": "",
+        "testCasesJson": "[ { \"Input\": \"3 4\", \"Expected\": \"12\" }, { \"Input\": \"10 2\", \"Expected\": \"20\" } ]"
+    },
+    {
+        "challengeId": 6,
+        "title": "Python — Reverse a String",
+        "question": "Read a string and print it reversed.\n\nHint: s[::-1]",
+        "xpGained": 20,
+        "type": "Code",
+        "category": "Python",
+        "difficulty": "Easy",
+        "correctAnswer": "",
+        "testCasesJson": "[ { \"Input\": \"hello\", \"Expected\": \"olleh\" }, { \"Input\": \"abc\", \"Expected\": \"cba\" } ]"
+    }
+]
