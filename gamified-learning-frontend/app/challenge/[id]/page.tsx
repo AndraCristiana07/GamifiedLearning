@@ -21,6 +21,13 @@ interface Challenge {
   testCasesJson: string | null;
 }
 
+interface RunResult {
+  input: string;
+  expected: string;
+  output: string;
+  passed: boolean;
+}
+
 type Language = "python" | "csharp" | "javascript" | "cpp";
 
 export default function ChallengePage() {
@@ -30,7 +37,7 @@ export default function ChallengePage() {
   const [answer, setAnswer] = useState("");
   const [language, setLanguage] = useState<Language>("python");
 
-  const [runResults, setRunResults] = useState<any[]>([]);
+  const [runResults, setRunResults] = useState<RunResult[]>([]);
   const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
   const [testCases, setTestCases] = useState<TestCase[]>([]);
@@ -47,8 +54,10 @@ export default function ChallengePage() {
         try {
           const parsed = JSON.parse(data.testCasesJson);
           setTestCases(parsed);
-        } catch (err) {
-          console.error("Invalid test case JSON");
+
+        } catch (err: unknown) {
+          if (err instanceof Error) console.error(`Error: ${err.message}`);
+          else console.error("Unexpected error occurred.");
         }
       }
     }
@@ -67,7 +76,7 @@ export default function ChallengePage() {
     setRunning(true);
     setRunResults([]);
 
-    const results: any[] = [];
+    const results: RunResult[] = [];
 
     for (const tc of testCases) {
       const res = await fetch("http://localhost:5180/api/code/execute", {
@@ -191,9 +200,8 @@ export default function ChallengePage() {
               {runResults.map((r, index) => (
                 <div
                   key={index}
-                  className={`p-3 mb-2 rounded ${
-                    r.passed ? "bg-green-800" : "bg-red-800"
-                  }`}
+                  className={`p-3 mb-2 rounded ${r.passed ? "bg-green-800" : "bg-red-800"
+                    }`}
                 >
                   <p><strong>Input:</strong> {r.input}</p>
                   <p><strong>Expected:</strong> {r.expected}</p>
