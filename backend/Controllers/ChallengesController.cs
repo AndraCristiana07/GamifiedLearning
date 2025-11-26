@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Gamified_learning.Models;
 using Gamified_learning.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace Gamified_learning.Controllers
 {
@@ -179,10 +180,7 @@ namespace Gamified_learning.Controllers
             // answer is text
             if (challenge.Type == "Text")
             {
-                bool correct = challenge.CorrectAnswer.Trim().ToLower() ==
-                            request.Answer.Trim().ToLower();
-
-                if (!correct)
+                if (challenge.CorrectAnswer.Trim().ToLower() != request.Answer.Trim().ToLower())
                     return BadRequest(new { message = "Incorrect answer." });
 
                 return await HandleSuccess(user, challenge);
@@ -191,23 +189,38 @@ namespace Gamified_learning.Controllers
             // answer is code
             if (challenge.Type == "Code")
             {
+                if (string.IsNullOrWhiteSpace(challenge.TestCasesJson))
+                    return BadRequest(new { message = "No test cases defined for this challenge." });
+
                 if (string.IsNullOrWhiteSpace(request.Language))
-                    return BadRequest(new { message = "Language is required for code challenges." });
+                    return BadRequest(new { message = "Language is required." });
 
-                var runResult = await ExecuteCode(request.Language, request.Answer);
+                var tests = JsonSerializer.Deserialize<List<TestCase>>(challenge.TestCasesJson)!;
+                Console.WriteLine(tests);
 
-                if (runResult == null)
-                    return BadRequest(new { message = "Code execution failed." });
+                foreach (var test in tests)
+                {
+                    var run = await ExecuteCode(request.Language, request.Answer, test.Input);
 
-                if (runResult.Output.Trim() != challenge.CorrectAnswer.Trim())
-                    return BadRequest(new { message = "Incorrect output." });
+                    if (run == null)
+                        return BadRequest(new { message = "Code execution failed." });
+
+                    if (run.Output.Trim() != test.Expected.Trim())
+                    {
+                        return BadRequest(new
+                        {
+                            message = "Wrong answer",
+                            failedTest = new { test.Input, Expected = test.Expected, Got = run.Output }
+                        });
+                    }
+                }
 
                 return await HandleSuccess(user, challenge);
             }
 
             return BadRequest(new { message = "Unknown challenge type." });
         }
-
+       
         private async Task<IActionResult> HandleSuccess(User user, Challenge challenge)
         {
             bool alreadyDone = await _context.UserChallengesStatus
@@ -247,7 +260,7 @@ namespace Gamified_learning.Controllers
             {
                 { "language_id", languageId.ToString() },
                 { "source_code", code },
-                { "stdin", "" }
+                { "stdin", stdin }
             };
 
             var jsonContent = JsonContent.Create(payload);

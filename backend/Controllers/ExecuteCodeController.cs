@@ -29,7 +29,7 @@ public class ExecuteCodeController : ControllerBase
         {
             { "language_id", languageId.ToString() },
             { "source_code", req.Answer },
-            { "stdin", "" }
+            { "stdin", req.Stdin }
         };
 
         var jsonContent = JsonContent.Create(payload);

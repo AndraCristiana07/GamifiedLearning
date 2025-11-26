@@ -4,167 +4,211 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Editor from "@monaco-editor/react";
 
-interface Challenge {
-  id: number;
-  title: string;
-  description: string;
-  category: string;
-  xp: number;
-  question: string;
-  type: "Code" | "Text";
-  language?: "python" | "csharp" | "cpp" | "javascript";
-  correctAnswer?: string;
+interface TestCase {
+  Input: string;
+  Expected: string;
 }
 
-type Language = "python" | "csharp" | "cpp" | "javascript";
+interface Challenge {
+  challengeId: number;
+  title: string;
+  question: string;
+  xpGained: number;
+  type: string;
+  category: string;
+  difficulty: string;
+  correctAnswer: string | null;
+  testCasesJson: string | null;
+}
+
+type Language = "python" | "csharp" | "javascript" | "cpp";
 
 export default function ChallengePage() {
   const { id } = useParams();
   const [challenge, setChallenge] = useState<Challenge | null>(null);
+
   const [answer, setAnswer] = useState("");
   const [language, setLanguage] = useState<Language>("python");
-  const [output, setOutput] = useState<string>("");
-  const [result, setResult] = useState<string | null>(null);
+
+  const [runResults, setRunResults] = useState<any[]>([]);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
+  const [testCases, setTestCases] = useState<TestCase[]>([]);
+
 
   useEffect(() => {
-    fetch(`http://localhost:5180/api/challenges/${id}`)
-      .then((res) => res.json())
-      .then(setChallenge)
-      .catch(() => setChallenge(null));
+    async function fetchChallenge() {
+      const res = await fetch(`http://localhost:5180/api/challenges/${id}`);
+      const data = await res.json();
+
+      setChallenge(data);
+
+      if (data.testCasesJson) {
+        try {
+          const parsed = JSON.parse(data.testCasesJson);
+          setTestCases(parsed);
+        } catch (err) {
+          console.error("Invalid test case JSON");
+        }
+      }
+    }
+
+    fetchChallenge();
   }, [id]);
 
-  const handleEditorChange = (value: string | undefined) => {
-    setAnswer(value ?? "");
-  };
 
-  const handleRun = async () => {
-    if (!answer.trim()) return;
+  function handleEditorChange(value: string | undefined) {
+    setAnswer(value ?? "");
+  }
+
+  async function handleRunTests() {
+    if (!testCases.length) return;
 
     setRunning(true);
-    setOutput("");
+    setRunResults([]);
 
-    try {
+    const results: any[] = [];
+
+    for (const tc of testCases) {
       const res = await fetch("http://localhost:5180/api/code/execute", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ language, answer }),
-      });
-
-      if (!res.ok) throw new Error(`Execution failed: ${res.statusText}`);
-      const data: { output: string } = await res.json();
-      setOutput(data.output || "No output");
-    } catch (err: unknown) {
-      if (err instanceof Error) setOutput(`Error: ${err.message}`);
-      else setOutput("Unexpected error occurred.");
-    } finally {
-      setRunning(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setResult(null);
-
-    if (!answer.trim()) {
-      setResult("Please enter an answer.");
-      return;
-    }
-
-    try {
-      const res = await fetch(`http://localhost:5180/api/challenges/${id}/submit`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: 1, // TODO: replace with actual user ID
-          challengeId: Number(id),
+          language,
           answer,
-          language: challenge?.type === "Code" ? language : undefined,
-        }),
+          stdin: tc.Input
+        })
       });
 
       const data = await res.json();
-      setResult(data.message ?? (res.ok ? "Correct!" : "Incorrect."));
-    } catch (err) {
-      if (err instanceof Error) setResult(`Submission failed: ${err.message}`);
-      else setResult("Unexpected error during submission.");
-    }
-  };
 
-  if (!challenge) return <p>Loading...</p>;
+      const output = (data.output ?? "").trim();
+      const expected = tc.Expected.trim();
+
+      results.push({
+        input: tc.Input,
+        expected,
+        output,
+        passed: output === expected
+      });
+    }
+
+    setRunResults(results);
+    setRunning(false);
+  }
+
+
+  async function handleSubmit() {
+    setSubmitMessage(null);
+
+    const res = await fetch(`http://localhost:5180/api/challenges/${id}/submit`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: 1, // TODO replace with actual user
+        challengeId: Number(id),
+        answer,
+        language
+      })
+    });
+
+    const data = await res.json();
+    setSubmitMessage(data.message);
+  }
+
+  if (!challenge) return <p className="text-white">Loading...</p>;
 
   return (
-    <div className="p-6 text-white max-w-4xl mx-auto">
+    <div className="p-6 text-white max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">{challenge.title}</h1>
-      <p className="text-gray-300 mb-6">{challenge.question}</p>
+      <p className="text-gray-300 mb-6 whitespace-pre-line">{challenge.question}</p>
 
-      {challenge.type === "Code" ? (
-        <div className="mb-6">
-          <label className="block mb-2">Language:</label>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value as Language)}
-            className="bg-gray-800 text-white px-3 py-1 rounded mb-4"
-          >
-            <option value="csharp">C#</option>
-            <option value="javascript">JavaScript</option>
-            <option value="cpp">C++</option>
-            <option value="python">Python</option>
-          </select>
-
-          <Editor
-            height="400px"
-            defaultLanguage={language}
-            language={language}
-            value={answer}
-            onChange={handleEditorChange}
-            theme="vs-dark"
-            options={{ minimap: { enabled: false } }}
-          />
-
-          <div className="mt-4 flex gap-4">
-            <button
-              type="button"
-              onClick={handleRun}
-              disabled={running}
-              className="bg-indigo-500 hover:bg-indigo-400 px-4 py-2 rounded font-semibold"
-            >
-              {running ? "Running..." : "Run"}
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              className="bg-green-500 hover:bg-green-400 px-4 py-2 rounded font-semibold"
-            >
-              Submit
-            </button>
-          </div>
-
-          {output && (
-            <p className="mt-4 bg-gray-900 p-4 rounded text-sm whitespace-pre-wrap">
-              {output}
-            </p>
-          )}
-        </div>
-      ) : (
-        <form onSubmit={handleSubmit}>
+      {challenge.type === "Text" && (
+        <div>
           <input
             type="text"
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            placeholder="Your answer..."
-            className="w-full p-2 mb-4 rounded bg-gray-800 text-white"
+            className="w-full p-2 rounded bg-gray-800 text-white"
+            placeholder="Your answer"
           />
+
           <button
-            type="submit"
-            className="bg-green-500 hover:bg-green-400 px-4 py-2 rounded font-semibold"
+            onClick={handleSubmit}
+            className="mt-4 bg-indigo-500 hover:bg-indigo-400 px-4 py-2 rounded font-semibold"
+          >
+            Submit Answer
+          </button>
+
+          {submitMessage && (
+            <p className="mt-3 text-lg">{submitMessage}</p>
+          )}
+        </div>
+      )}
+
+      {challenge.type === "Code" && (
+        <div>
+          <label>Language: </label>
+          <select
+            value={language}
+            onChange={(e) => setLanguage(e.target.value as Language)}
+            className="bg-gray-800 p-2 rounded ml-2 mb-4"
+          >
+            <option value="python">Python</option>
+            <option value="javascript">JavaScript</option>
+            <option value="csharp">C#</option>
+            <option value="cpp">C++</option>
+          </select>
+
+          <Editor
+            height="400px"
+            language={language}
+            value={answer}
+            defaultValue=""
+            onChange={handleEditorChange}
+            theme="vs-dark"
+          />
+
+          <button
+            disabled={running}
+            onClick={handleRunTests}
+            className="mt-4 bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded font-semibold mr-3"
+          >
+            {running ? "Running..." : "Run Tests"}
+          </button>
+
+          <button
+            onClick={handleSubmit}
+            className="mt-4 bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-semibold"
           >
             Submit
           </button>
-        </form>
-      )}
 
-      {result && <p className={`mt-4 text-lg ${result.toLowerCase().includes("incorrect") || result.toLowerCase().includes("failed")  ? "text-red-400" : "text-green-400"}`}>{result}</p>}
+          {runResults.length > 0 && (
+            <div className="mt-6">
+              <h2 className="text-xl font-semibold mb-3">Test results</h2>
+
+              {runResults.map((r, index) => (
+                <div
+                  key={index}
+                  className={`p-3 mb-2 rounded ${
+                    r.passed ? "bg-green-800" : "bg-red-800"
+                  }`}
+                >
+                  <p><strong>Input:</strong> {r.input}</p>
+                  <p><strong>Expected:</strong> {r.expected}</p>
+                  <p><strong>Output:</strong> {r.output}</p>
+                  <p><strong>Status:</strong> {r.passed ? "PASSED" : "FAILED"}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {submitMessage && (
+            <p className="mt-4 text-lg">{submitMessage}</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

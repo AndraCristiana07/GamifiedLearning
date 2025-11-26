@@ -3,6 +3,7 @@ using System;
 using Gamified_learning.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gamified_learning.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251125163850_TestCasesAsList")]
+    partial class TestCasesAsList
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -38,9 +41,6 @@ namespace Gamified_learning.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("TestCasesJson")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -55,6 +55,30 @@ namespace Gamified_learning.Migrations
                     b.HasKey("ChallengeId");
 
                     b.ToTable("Challenges");
+                });
+
+            modelBuilder.Entity("Gamified_learning.Models.TestCase", b =>
+                {
+                    b.Property<int>("TestCaseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ChallengeId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Expected")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Input")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TestCaseId");
+
+                    b.HasIndex("ChallengeId");
+
+                    b.ToTable("TestCases");
                 });
 
             modelBuilder.Entity("Gamified_learning.Models.User", b =>
@@ -113,6 +137,17 @@ namespace Gamified_learning.Migrations
                     b.ToTable("UserChallengesStatus");
                 });
 
+            modelBuilder.Entity("Gamified_learning.Models.TestCase", b =>
+                {
+                    b.HasOne("Gamified_learning.Models.Challenge", "Challenge")
+                        .WithMany("TestCases")
+                        .HasForeignKey("ChallengeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Challenge");
+                });
+
             modelBuilder.Entity("Gamified_learning.Models.UserChallengeStatus", b =>
                 {
                     b.HasOne("Gamified_learning.Models.Challenge", "Challenge")
@@ -130,6 +165,11 @@ namespace Gamified_learning.Migrations
                     b.Navigation("Challenge");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Gamified_learning.Models.Challenge", b =>
+                {
+                    b.Navigation("TestCases");
                 });
 #pragma warning restore 612, 618
         }
