@@ -19,6 +19,8 @@ interface Challenge {
   difficulty: string;
   correctAnswer: string | null;
   testCasesJson: string | null;
+  hintPenalty: number;
+  hintsJson: string | null;
 }
 
 interface RunResult {
@@ -42,6 +44,8 @@ export default function ChallengePage() {
   const [running, setRunning] = useState(false);
   const [testCases, setTestCases] = useState<TestCase[]>([]);
 
+  const [hints, setHints] = useState<string[]>([]);
+  const [hintMessage, setHintMessage] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchChallenge() {
@@ -125,13 +129,30 @@ export default function ChallengePage() {
     setSubmitMessage(data.message);
   }
 
+  async function handleShowHint() {
+    const res = await fetch(`http://localhost:5180/api/challenges/${id}/hint`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(1) // userId = 1 
+    });
+
+    const data = await res.json();
+    setHints(data.hints);
+    setHintMessage(data.message);
+  }
+
   if (!challenge) return <p className="text-white">Loading...</p>;
 
   return (
     <div className="p-6 text-white max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-4">{challenge.title}</h1>
       <p className="text-gray-300 mb-6 whitespace-pre-line">{challenge.question}</p>
-
+      <button
+        onClick={handleShowHint}
+        className="mt-4 bg-yellow-600 px-4 py-2 rounded font-semibold"
+      >
+        Show Hint (-{challenge.hintPenalty} XP)
+      </button>
       {challenge.type === "Text" && (
         <div>
           <input
@@ -192,6 +213,16 @@ export default function ChallengePage() {
           >
             Submit
           </button>
+          {hints.length > 0 && (
+            <div className="mt-4 p-3 bg-gray-700 rounded">
+              <h3 className="text-lg font-bold">Hints</h3>
+              {hints.map((h, i) => (
+                <p key={i} className="mt-2 text-yellow-300">{h}</p>
+              ))}
+            </div>
+          )}
+
+          {hintMessage && <p className="mt-3">{hintMessage}</p>}
 
           {runResults.length > 0 && (
             <div className="mt-6">

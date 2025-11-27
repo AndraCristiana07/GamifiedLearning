@@ -3,6 +3,7 @@ using System;
 using Gamified_learning.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Gamified_learning.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251127162336_AddHints")]
+    partial class AddHints
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -34,7 +37,7 @@ namespace Gamified_learning.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("HintPenalty")
+                    b.Property<int?>("HintPenalty")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("HintsJson")

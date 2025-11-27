@@ -321,6 +321,32 @@ namespace Gamified_learning.Controllers
             return Ok(new { message = $"{challenges.Count} challenges added successfully!" });
         }
 
+        [HttpPost("{id}/hint")]
+        public async Task<IActionResult> RevealHint(int id, [FromBody] int userId)
+        {
+            var challenge = await _context.Challenges.FindAsync(id);
+            var user = await _context.Users.FindAsync(userId);
+
+            if (challenge == null || user == null)
+                return NotFound();
+
+            if (string.IsNullOrWhiteSpace(challenge.HintsJson))
+                return BadRequest(new { message = "No hints available." });
+
+            // subtract XP
+            user.Xp -= challenge.HintPenalty;
+            if (user.Xp < 0) user.Xp = 0;
+
+            await _context.SaveChangesAsync();
+
+            var hints = JsonSerializer.Deserialize<List<string>>(challenge.HintsJson);
+
+            return Ok(new {
+                hints,
+                message = $"Hint revealed. You lost {challenge.HintPenalty} XP."
+            });
+        }
+
     }
 
 }

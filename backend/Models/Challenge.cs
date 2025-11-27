@@ -13,5 +13,8 @@ namespace Gamified_learning.Models
         public string Difficulty { get; set; } = "Easy";
 
         public string? TestCasesJson { get; set; }
+
+        public string? HintsJson { get; set; }
+        public int HintPenalty { get; set; }
     }
 }
