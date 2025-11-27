@@ -325,25 +325,42 @@ namespace Gamified_learning.Controllers
         public async Task<IActionResult> RevealHint(int id, [FromBody] int userId)
         {
             var challenge = await _context.Challenges.FindAsync(id);
-            var user = await _context.Users.FindAsync(userId);
-
-            if (challenge == null || user == null)
-                return NotFound();
+            if (challenge == null)
+                return NotFound("Challenge not found.");
 
             if (string.IsNullOrWhiteSpace(challenge.HintsJson))
-                return BadRequest(new { message = "No hints available." });
+                return BadRequest("This challenge has no hints.");
+
+            var hints = JsonSerializer.Deserialize<List<string>>(challenge.HintsJson)!;
+
+            var entry = await _context.UserChallengeHints
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.ChallengeId == id);
+
+            if (entry == null)
+            {
+                entry = new UserChallengeHint { UserId = userId, ChallengeId = id, HintsUsed = 0 };
+                _context.UserChallengeHints.Add(entry);
+            }
+
+            if (entry.HintsUsed >= hints.Count)
+                return BadRequest("No more hints available.");
+
+            string nextHint = hints[entry.HintsUsed];
 
             // subtract XP
-            user.Xp -= challenge.HintPenalty;
-            if (user.Xp < 0) user.Xp = 0;
+            var user = await _context.Users.FindAsync(userId);
+            user.Xp = Math.Max(0, user.Xp - challenge.HintPenalty);
+
+            entry.HintsUsed++;
 
             await _context.SaveChangesAsync();
 
-            var hints = JsonSerializer.Deserialize<List<string>>(challenge.HintsJson);
-
-            return Ok(new {
-                hints,
-                message = $"Hint revealed. You lost {challenge.HintPenalty} XP."
+            return Ok(new
+            {
+                hint = nextHint,
+                hintNumber = entry.HintsUsed,
+                remaining = hints.Count - entry.HintsUsed,
+                xpPenalty = challenge.HintPenalty
             });
         }
 

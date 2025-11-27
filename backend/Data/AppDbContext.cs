@@ -11,5 +11,6 @@ namespace Gamified_learning.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Challenge> Challenges { get; set; }
         public DbSet<UserChallengeStatus> UserChallengesStatus { get; set; }
+        public DbSet<UserChallengeHint> UserChallengeHints { get; set; }
     }
 }

@@ -137,7 +137,9 @@ export default function ChallengePage() {
     });
 
     const data = await res.json();
-    setHints(data.hints);
+    if (data.hint) {
+      setHints(prev => [...prev, data.hint]);
+    }
     setHintMessage(data.message);
   }
 
