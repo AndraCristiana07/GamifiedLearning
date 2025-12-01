@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import Home from '../app/home/page';
+import Home from '../app/page';
 
 const pushMock = jest.fn();
 
