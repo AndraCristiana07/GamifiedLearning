@@ -364,6 +364,42 @@ namespace Gamified_learning.Controllers
             });
         }
 
+        [HttpGet("filter")]
+        public async Task<IActionResult> Filter([FromQuery] string? tags,[FromQuery] string? difficulty,[FromQuery] string? category,[FromQuery] string? sort)
+        {
+            var query = _context.Challenges.AsQueryable();
+
+            // by difficulty
+            if (!string.IsNullOrWhiteSpace(difficulty))
+                query = query.Where(c => c.Difficulty.ToLower() == difficulty.ToLower());
+
+            // by category
+            if (!string.IsNullOrWhiteSpace(category))
+                query = query.Where(c => c.Category.ToLower() == category.ToLower());
+
+            // by tags
+            if (!string.IsNullOrWhiteSpace(tags))
+            {
+                var tagList = tags.Split(',').Select(t => t.Trim().ToLower()).ToList();
+
+                query = query.Where(ch =>
+                    ch.TagsJson != null &&
+                    tagList.All(t => ch.TagsJson.ToLower().Contains(t))
+                );
+            }
+
+            // sorting
+            query = sort switch
+            {
+                "xp" => query.OrderBy(c => c.XpGained),
+                "difficulty" => query.OrderBy(c => c.Difficulty),
+                "title" => query.OrderBy(c => c.Title),
+                _ => query
+            };
+
+            return Ok(await query.ToListAsync());
+        }
+
     }
 
 }

@@ -16,5 +16,7 @@ namespace Gamified_learning.Models
 
         public string? HintsJson { get; set; }
         public int HintPenalty { get; set; }
+
+        public string? TagsJson { get; set; }
     }
 }

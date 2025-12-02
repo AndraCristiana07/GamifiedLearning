@@ -10,7 +10,8 @@
         "correctAnswer": "",
         "testCasesJson": "[ { \"Input\": \"3 4\", \"Expected\": \"7\" }, { \"Input\": \"1 2\", \"Expected\": \"3\" } ]",
         "hintsJson":"[ \"Be sure the values are integers\", \"The output shold be the exact computed sum, nothing extra\"  ]",
-        "hintPenalty": 1
+        "hintPenalty": 1,
+        "tagsJson": "[ \"math\", \"basics\", \"python\" ]"
 
     },
     {
@@ -24,7 +25,8 @@
         "correctAnswer": "",
         "testCasesJson": "[ { \"Input\": \"3 4\", \"Expected\": \"less\" }, { \"Input\": \"4 4\", \"Expected\": \"equal\" }, { \"Input\": \"10 2\", \"Expected\": \"greater\" } ]",
         "hintsJson":"[ \"There are 3 possible outcomes while comparing 2 numbers\", \"Use conditional branching (if/else/elif) to handle all cases\"  ]",
-        "hintPenalty": 1
+        "hintPenalty": 1,
+        "tagsJson": "[ \"math\", \"basics\", \"python\" ]"
     },
     {
         "challengeId": 3,
@@ -37,7 +39,8 @@
         "correctAnswer": "",
         "testCasesJson": "[ { \"Input\": \"2 3\", \"Expected\": \"6\" }, { \"Input\": \"5 5\", \"Expected\": \"25\" } ]",
         "hintsJson":"[ \"Make sure both values are integers\", \"The output shold be the exact computed product, nothing extra\"  ]",
-        "hintPenalty": 1
+        "hintPenalty": 1,
+        "tagsJson": "[ \"math\", \"basics\", \"csharp\" ]"
     },
     {
         "challengeId": 4,
@@ -50,7 +53,8 @@
         "correctAnswer": "",
         "testCasesJson": "[ { \"Input\": \"3\", \"Expected\": \"odd\" }, { \"Input\": \"10\", \"Expected\": \"even\" } ]",
         "hintsJson":"[ \"A number is even if it leaves no remainder when devided by 2\", \"Use modulo operator: number % 2\"  ]",
-        "hintPenalty": 1
+        "hintPenalty": 1,
+        "tagsJson": "[ \"basics\", \"csharp\" ]"
     },
     {
         "challengeId": 5,
@@ -63,7 +67,8 @@
         "correctAnswer": "",
         "testCasesJson": "[ { \"Input\": \"3 4\", \"Expected\": \"12\" }, { \"Input\": \"10 2\", \"Expected\": \"20\" } ]",
         "hintsJson":"[ \"Area is calculated by a simple multiplication  width * height\", \"Ensure the printed value is just the numeric result\"  ]",
-        "hintPenalty": 1
+        "hintPenalty": 1,
+        "tagsJson": "[ \"math\", \"areas\", \"python\" ]"
     },
     {
         "challengeId": 6,
@@ -76,6 +81,7 @@
         "correctAnswer": "",
         "testCasesJson": "[ { \"Input\": \"hello\", \"Expected\": \"olleh\" }, { \"Input\": \"abc\", \"Expected\": \"cba\" } ]",
         "hintsJson":"[ \"Strings can be processed one character at a time\", \"You can use s[::-1]\"  ]",
-        "hintPenalty": 2
+        "hintPenalty": 2,
+        "tagsJson": "[ \"strings\", \"python\" ]"
     }
 ]
