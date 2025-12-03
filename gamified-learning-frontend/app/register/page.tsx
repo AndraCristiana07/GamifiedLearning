@@ -7,6 +7,7 @@ export default function RegisterPage(){
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('')
     const [error, setError] = useState<string | null>(null);
 
     const [success, setSuccess] = useState('')
@@ -18,6 +19,11 @@ export default function RegisterPage(){
         setSuccess('');
 
         try {
+
+            if (password != confirmPassword){
+                setError("Passwords do not match")
+                throw new Error("Passwords do not match");
+            }
             const res = await fetch("http://localhost:5180/api/auth/register", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
@@ -34,6 +40,8 @@ export default function RegisterPage(){
             setUsername('')
             setEmail('')
             setPassword('')
+            setConfirmPassword('')
+            router.push('login')
 
         } catch (err: unknown) {
             if (err instanceof Error) {
@@ -46,7 +54,7 @@ export default function RegisterPage(){
     return (
     <div>
       <h1>Register</h1>
-      {error && <p>{error}</p>}
+      {/* {error && <p>{error}</p>} */}
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <div className="">Sign up here</div>
@@ -77,16 +85,16 @@ export default function RegisterPage(){
             </div>
              <div>
                 <div className="flex items-center justify-between">
-                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-100">Password</label>
+                <label htmlFor="password" className="block text-sm/6 font-medium text-gray-100">Confirm Password</label>
                     
                 </div>
                 <div className="mt-2">
-                    <input id="password" type="password" name="password" required autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)}  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6" />
+                    <input id="password" type="password" name="password" required autoComplete="current-password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}  className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6" />
                 </div>
             </div>
 
             <div>
-                <button type="submit" onClick={()=>router.push('login')} className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Register</button>
+                <button type="submit"  className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Register</button>
             </div>
             </form>
 
