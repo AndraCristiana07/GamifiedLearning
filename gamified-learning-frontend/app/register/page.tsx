@@ -1,7 +1,8 @@
 "use client"
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
-export default function LoginPage(){
+export default function RegisterPage(){
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -9,7 +10,8 @@ export default function LoginPage(){
     const [error, setError] = useState<string | null>(null);
 
     const [success, setSuccess] = useState('')
-    
+    const router = useRouter();
+
     const handleSubmit = async (e: React.FormEvent) =>{
         e.preventDefault();
         setError(null);
@@ -43,7 +45,7 @@ export default function LoginPage(){
     }
     return (
     <div>
-      <h1>Login</h1>
+      <h1>Register</h1>
       {error && <p>{error}</p>}
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -84,7 +86,7 @@ export default function LoginPage(){
             </div>
 
             <div>
-                <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Register</button>
+                <button type="submit" onClick={()=>router.push('login')} className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Register</button>
             </div>
             </form>
 
