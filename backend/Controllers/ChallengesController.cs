@@ -308,7 +308,7 @@ namespace Gamified_learning.Controllers
 
             return Ok(recent);
         }
-
+        
         [HttpPost("bulk")]
         public async Task<IActionResult> BulkAddChallenges([FromBody] List<Challenge> challenges)
         {
