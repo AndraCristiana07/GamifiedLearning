@@ -21,6 +21,9 @@ builder.Services.AddCors(options =>
         }));
 
 builder.Services.AddOpenApiDocument();
+
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 app.UseCors("AllowAllOrigins");

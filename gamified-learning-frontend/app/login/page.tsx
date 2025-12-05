@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage(){
 
@@ -7,6 +8,8 @@ export default function LoginPage(){
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
     const handleSubmit = async (e: React.FormEvent) =>{
         e.preventDefault();
         setError(null);
@@ -64,11 +67,11 @@ export default function LoginPage(){
             </div>
 
             <div>
-                <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Sign in</button>
+                <button type="submit" onClick={()=>router.push('/')} className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Sign in</button>
             </div>
             </form>
 
-            <p className="mt-10 text-center text-sm/6 text-gray-400">
+            <p className="mt-10 text-center text-sm/6 text-gray-400" onClick={()=>router.push('register')}>
             Do not have an account? 
             <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300"> Register now!</a>
             </p>
