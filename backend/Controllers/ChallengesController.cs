@@ -400,6 +400,23 @@ namespace Gamified_learning.Controllers
             return Ok(await query.ToListAsync());
         }
 
+
+        [HttpGet("{id}/skel/{lang}")]
+        public async Task<IActionResult> GetSkelCode(int id, string lang)
+        {
+            var c = await _context.Challenges.FindAsync(id);
+            if (c == null) return NotFound();
+
+            return lang.ToLower() switch
+            {
+                "python" => Ok(c.SkelCodePython),
+                "csharp" => Ok(c.SkelCodeCsharp),
+                "javascript" => Ok(c.SkelCodeJavascript),
+                "cpp" => Ok(c.SkelCodeCpp),
+                _ => BadRequest("Unsupported language")
+            };
+        }
+
     }
 
 }

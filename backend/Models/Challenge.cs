@@ -18,5 +18,12 @@ namespace Gamified_learning.Models
         public int HintPenalty { get; set; }
 
         public string? TagsJson { get; set; }
+
+        public string? SkelCodePython { get; set; }
+        public string? SkelCodeJavascript { get; set; }
+        public string? SkelCodeCpp { get; set; }
+        public string? SkelCodeCsharp { get; set; }
+        
+        
     }
 }

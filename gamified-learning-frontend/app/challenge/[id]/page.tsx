@@ -48,6 +48,16 @@ export default function ChallengePage() {
   const [hintMessage, setHintMessage] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!id || !language) return;
+
+    fetch(`http://localhost:5180/api/challenges/${id}/skel/${language}`)
+      .then(r => r.text())
+      .then(code => setAnswer(code));
+    console.log("code skel: ", answer)
+  }, [language, id])
+
+  useEffect(() => {
+
     async function fetchChallenge() {
       const res = await fetch(`http://localhost:5180/api/challenges/${id}`);
       const data = await res.json();
@@ -66,6 +76,7 @@ export default function ChallengePage() {
       }
     }
 
+
     fetchChallenge();
   }, [id]);
 
@@ -77,11 +88,26 @@ export default function ChallengePage() {
   async function handleRunTests() {
     if (!testCases.length) return;
 
+
     setRunning(true);
     setRunResults([]);
 
     const results: RunResult[] = [];
 
+
+    if (!answer.trim()) {
+      setRunResults([
+        {
+          input: "",
+          expected: "",
+          output: "No code provided",
+          passed: false
+        }
+      ])
+      setRunning(false)
+      return
+    }
+    
     for (const tc of testCases) {
       const res = await fetch("http://localhost:5180/api/code/execute", {
         method: "POST",
@@ -114,6 +140,10 @@ export default function ChallengePage() {
   async function handleSubmit() {
     setSubmitMessage(null);
 
+    if (!answer.trim()) {
+      setSubmitMessage("No code provided")
+      return
+    }
     const res = await fetch(`http://localhost:5180/api/challenges/${id}/submit`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
