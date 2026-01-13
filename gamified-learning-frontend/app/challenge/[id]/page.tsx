@@ -47,9 +47,21 @@ export default function ChallengePage() {
   const [hints, setHints] = useState<string[]>([]);
   const [hintMessage, setHintMessage] = useState<string | null>(null);
 
+  function getEditorStorage(
+    challengeId: string | number,
+    language: string
+  ) {
+    return `challenge:${challengeId}:lang:${language}:code`
+  }
   useEffect(() => {
     if (!id || !language) return;
 
+    const key = getEditorStorage(id as string, language);
+    const savedCode = localStorage.getItem(key)
+    if (savedCode) {
+      setAnswer(savedCode)
+      return
+    }
     fetch(`http://localhost:5180/api/challenges/${id}/skel/${language}`)
       .then(r => r.text())
       .then(code => setAnswer(code));
@@ -82,7 +94,11 @@ export default function ChallengePage() {
 
 
   function handleEditorChange(value: string | undefined) {
-    setAnswer(value ?? "");
+    const code = value ?? "";
+    setAnswer(code);
+    if (!id) return
+    const key = getEditorStorage(id as string, language)
+    localStorage.setItem(key, code)
   }
 
   async function handleRunTests() {
