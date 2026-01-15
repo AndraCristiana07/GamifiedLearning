@@ -32,15 +32,15 @@
         "hintPenalty": 1,
         "tagsJson": "[ \"math\", \"basics\", \"python\" ]",
         "skelCodePython": "def solve(a,b):\n    # TODO: implement logic\n    return 0\n\nif __name__=='__main__':\n    import sys\n    data=sys.stdin.read().split()\n    a,b=map(int,data)\n    print(solve(a,b))",
-        "skelCodeCsharp": "using System;\r\n\r\npublic class Solution {\r\n    public static int Solve(int a, int b) {\r\n        \/\/ TODO: implement logic\r\n        return 0;\r\n    }\r\n\r\n    public static void Main() {\r\n        var parts = Console.ReadLine().Split();\r\n        int a = int.Parse(parts[0]);\r\n        int b = int.Parse(parts[1]);\r\n        Console.WriteLine(Solve(a, b));\r\n    }\r\n}",
+        "skelCodeCsharp": "using System;\r\n\r\npublic class Solution {\r\n    public static string Solve(int a, int b) {\r\n        \/\/ TODO: implement logic\r\n        return 0;\r\n    }\r\n\r\n    public static void Main() {\r\n        var parts = Console.ReadLine().Split();\r\n        int a = int.Parse(parts[0]);\r\n        int b = int.Parse(parts[1]);\r\n        Console.WriteLine(Solve(a, b));\r\n    }\r\n}",
         "skelCodeJavascript": "function solve(a, b) {\r\n\/\/ TODO: implement logic\r\n    return 0;\r\n}\r\n\r\nfunction main() {\r\n    const fs = require('fs');\r\n    const data = fs.readFileSync(0, 'utf8').trim().split(\" \");\r\n    const a = Number(data[0]);\r\n    const b = Number(data[1]);\r\n    console.log(solve(a, b));\r\n}\r\n\r\nmain();",
-        "skelCodeCpp": "#include <bits\/stdc++.h>\r\nusing namespace std;\r\n\r\nint solve(int a, int b) {\r\n    \/\/ TODO: implement logic\r\n    return 0;\r\n    }\r\n\r\nint main() {\r\n    int a, b;\r\n    cin >> a >> b;\r\n    cout << solve(a, b);\r\n}"
+        "skelCodeCpp": "#include <bits\/stdc++.h>\r\nusing namespace std;\r\n\r\nstring solve(int a, int b) {\r\n    \/\/ TODO: implement logic\r\n    return 0;\r\n    }\r\n\r\nint main() {\r\n    int a, b;\r\n    cin >> a >> b;\r\n    cout << solve(a, b);\r\n}"
 
     },
     {
         "challengeId": 3,
         "title": "C# — Multiply Two Numbers",
-        "question": "Write a C# program that multiplies two integers read from stdin.\n\nHint: Use Console.ReadLine() and string.Split().",
+        "question": "Write a C# program that multiplies two integers read from stdin.\n\n",
         "xpGained": 10,
         "type": "Code",
         "category": "CSharp",
@@ -50,7 +50,7 @@
         "hintsJson":"[ \"Make sure both values are integers\", \"The output shold be the exact computed product, nothing extra\"  ]",
         "hintPenalty": 1,
         "tagsJson": "[ \"math\", \"basics\", \"csharp\" ]",
-        "skelCodePython": "def solve(a,b):\n    # TODO: implement logic\n    return 0\n\nif __name=='__main__':\n    import sys\n    data=sys.stdin.read().split()\n    a,b=map(int,data)\n    print(solve(a,b))",
+        "skelCodePython": "def solve(a,b):\n    # TODO: implement logic\n    return 0\n\nif __name__=='__main__':\n    import sys\n    data=sys.stdin.read().split()\n    a,b=map(int,data)\n    print(solve(a,b))",
         "skelCodeCsharp": "using System;\r\n\r\npublic class Solution {\r\n    public static int Solve(int a, int b) {\r\n        \/\/ TODO: implement logic\r\n        return 0;\r\n    }\r\n\r\n    public static void Main() {\r\n        var parts = Console.ReadLine().Split();\r\n        int a = int.Parse(parts[0]);\r\n        int b = int.Parse(parts[1]);\r\n        Console.WriteLine(Solve(a, b));\r\n    }\r\n}",
         "skelCodeJavascript": "function solve(a, b) {\r\n\/\/ TODO: implement logic\r\n    return 0;\r\n}\r\n\r\nfunction main() {\r\n    const fs = require('fs');\r\n    const data = fs.readFileSync(0, 'utf8').trim().split(\" \");\r\n    const a = Number(data[0]);\r\n    const b = Number(data[1]);\r\n    console.log(solve(a, b));\r\n}\r\n\r\nmain();",
         "skelCodeCpp": "#include <bits\/stdc++.h>\r\nusing namespace std;\r\n\r\nint solve(int a, int b) {\r\n    \/\/ TODO: implement logic\r\n    return 0;\r\n    }\r\n\r\nint main() {\r\n    int a, b;\r\n    cin >> a >> b;\r\n    cout << solve(a, b);\r\n}"
@@ -69,10 +69,10 @@
         "hintsJson":"[ \"A number is even if it leaves no remainder when devided by 2\", \"Use modulo operator: number % 2\"  ]",
         "hintPenalty": 1,
         "tagsJson": "[ \"basics\", \"csharp\" ]",
-        "skelCodePython": "def solve(a):\n    # TODO: implement logic\n    return 0\n\nif __name__=='__main__':\n    import sys\n    data=sys.stdin.read().split()\n    a=map(int,data)\n    print(solve(a))",
-        "skelCodeCsharp": "using System;\r\n\r\npublic class Solution {\r\n    public static int Solve(int a) {\r\n        \/\/ TODO: implement logic\r\n        return 0;\r\n                }\r\n\r\n                public static void Main() {\r\n                    var parts = Console.ReadLine().Split();\r\n                    int a = int.Parse(parts[0]);\r\n                    Console.WriteLine(Solve(a));\r\n                }\r\n            }",
+        "skelCodePython": "def solve(a):\n    # TODO: implement logic\n    return 0\n\nif __name__=='__main__':\n    import sys\n    a = sys.stdin.read().split()\n    print(solve(a))",
+        "skelCodeCsharp": "using System;\r\n\r\npublic class Solution {\r\n    public static string Solve(int a) {\r\n        \/\/ TODO: implement logic\r\n        return \"\";\r\n                }\r\n\r\n                public static void Main() {\r\n                    var parts = Console.ReadLine().Split();\r\n                    int a = int.Parse(parts[0]);\r\n                    Console.WriteLine(Solve(a));\r\n                }\r\n            }",
         "skelCodeJavascript": "function solve(a) {\r\n\/\/ TODO: implement logic\r\n    return 0;\r\n}\r\n\r\nfunction main() {\r\n    const fs = require('fs');\r\n    const data = fs.readFileSync(0, 'utf8').trim().split(\" \");\r\n    const a = Number(data[0]);\r\n    console.log(solve(a));\r\n}\r\n\r\nmain();",
-        "skelCodeCpp": "#include <bits\/stdc++.h>\r\nusing namespace std;\r\n\r\nint solve(int a) {\r\n    \/\/ TODO: implement logic\r\n    return 0;\r\n    }\r\n\r\nint main() {\r\n    int a;\r\n    cin >> a;\r\n    cout << solve(a);\r\n}"
+        "skelCodeCpp": "#include <bits\/stdc++.h>\r\nusing namespace std;\r\n\r\nstring solve(int a) {\r\n    \/\/ TODO: implement logic\r\n    return \"\";\r\n    }\r\n\r\nint main() {\r\n    int a;\r\n    cin >> a;\r\n    cout << solve(a);\r\n}"
 
     },
     {
@@ -107,10 +107,10 @@
         "hintsJson":"[ \"Strings can be processed one character at a time\", \"You can use s[::-1]\"  ]",
         "hintPenalty": 2,
         "tagsJson": "[ \"strings\", \"python\" ]",
-        "skelCodePython": "def solve(a):\n    # TODO: implement logic\n    return 0\n\nif __name__=='__main__':\n    import sys\n    data=sys.stdin.read().strip()\n    print(solve(a))",
-        "skelCodeCsharp": "using System;\r\n\r\npublic class Solution {\r\n    public static string Solve(string a) {\r\n        \/\/ TODO: implement logic\r\n        return '';\r\n    }\r\n\r\n    public static void Main() {\r\n        var parts = Console.ReadLine().Split();\r\n        Console.WriteLine(Solve(a));\r\n    }\r\n}",
-        "skelCodeJavascript": "function solve(a) {\r\n\/\/ TODO: implement logic\r\n    return '';\r\n}\r\n\r\nfunction main() {\r\n    const fs = require('fs');\r\n    const data = fs.readFileSync(0, 'utf8').trim();\r\n    console.log(solve(a));\r\n}\r\n\r\nmain();",
-        "skelCodeCpp": "#include <bits\/stdc++.h>\r\nusing namespace std;\r\n\r\nint solve(string a) {\r\n    \/\/ TODO: implement logic\r\n    return '';\r\n    }\r\n\r\nint main() {\r\n    string a;\r\n    getline(cin, a);\r\n    cout << solve(a);\r\n}"
+        "skelCodePython": "def solve(a):\n    # TODO: implement logic\n    return 0\n\nif __name__=='__main__':\n    import sys\n    a = sys.stdin.read().strip()\n    print(solve(a))",
+        "skelCodeCsharp": "using System;\r\n\r\npublic class Solution {\r\n    public static string Solve(string a) {\r\n        \/\/ TODO: implement logic\r\n        return \"\";\r\n    }\r\n\r\n    public static void Main() {\r\n        string a = Console.ReadLine();\r\n        Console.WriteLine(Solve(a));\r\n    }\r\n}",
+        "skelCodeJavascript": "function solve(a) {\r\n\/\/ TODO: implement logic\r\n    return '';\r\n}\r\n\r\nfunction main() {\r\n    const fs = require('fs');\r\n    const a = fs.readFileSync(0, 'utf8').trim();\r\n    console.log(solve(a));\r\n}\r\n\r\nmain();",
+        "skelCodeCpp": "#include <bits\/stdc++.h>\r\nusing namespace std;\r\n\r\nstring solve(string a) {\r\n    \/\/ TODO: implement logic\r\n    return \"\";\r\n    }\r\n\r\nint main() {\r\n    string a;\r\n    getline(cin, a);\r\n    cout << solve(a);\r\n}"
 
     }
 ]
