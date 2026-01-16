@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import CategoryCard from "@/components/cardcomponent";
 
 interface UserData {
   username: string;
@@ -40,6 +41,31 @@ export default function Home() {
   const [randomChallenge, setRandomChallenge] = useState<Challenge>();
   const router = useRouter();
 
+  const specificHues: { [key: string]: any } = {
+    'Python': { hueA: 180, hueB: 280 },
+    'Cpp': { hueA: 260, hueB: 360 },
+    'CSharp': { hueA: 340, hueB: 50 },
+    'JavaScript': { hueA: 60, hueB: 160 },
+
+  };
+
+
+  const coloredCategories = categories.map((cat, i) => {
+    if (specificHues[cat]) {
+      return {
+        cat,
+        hueA: specificHues[cat].hueA,
+        hueB: specificHues[cat].hueB,
+      };
+    } else {
+      return {
+        cat,
+        hueA: i * 10 + 10,
+        hueB: i * 60 + 50,
+      };
+    }
+  });
+
   useEffect(() => {
     fetch(`http://localhost:5180/api/challenges/1/recent`)
       .then((r) => r.json())
@@ -70,6 +96,8 @@ export default function Home() {
     fetch("http://localhost:5180/api/challenges/categories")
       .then((res) => res.json())
       .then(setCategories);
+
+
   }, []);
 
   function handleRandomChallenge() {
@@ -140,26 +168,20 @@ export default function Home() {
 
       <section>
         <h2 className="text-2xl font-semibold mb-4">📚 Categories</h2>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {categories.map((cat, i) => (
-            <motion.div
+        <div className="grid grid-cols-1 gap-12">
+          {coloredCategories.map(({ cat, hueA, hueB }, i) => (
+            <div
               key={cat}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              whileHover={{ scale: 1.05, backgroundColor: "rgb(55 65 81)" }}
-              className="p-6 bg-gray-800 rounded-xl cursor-pointer transition"
-              onClick={() =>
-                router.push(`/categories/${encodeURIComponent(cat)}`)
-              }
+              onClick={() => router.push(`/categories/${encodeURIComponent(cat)}`)}
+              className="cursor-pointer"
             >
-              <h3 className="text-lg font-bold capitalize">{cat}</h3>
-              <p>View challenges</p>
-            </motion.div>
+
+              <CategoryCard i={i} category={cat} hueA={hueA} hueB={hueB} />
+            </div>
           ))}
         </div>
       </section>
+
 
       <section>
         <h2 className="text-2xl font-semibold mb-4">⏳ Recent Activity</h2>
