@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Gamified_learning.Models;
 using Gamified_learning.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+
 
 namespace Gamified_learning.Controllers 
 {
@@ -24,7 +27,20 @@ namespace Gamified_learning.Controllers
             return await _dbContext.Users.ToListAsync();
         }
 
-        [HttpGet("{id}")]
+        [Authorize]
+        [HttpGet("loggedIn")]
+        public async Task<ActionResult<User>> GetLoggedIn()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = await _dbContext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
+
+        [HttpGet("{id:int}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
             var user = await _dbContext.Users.FindAsync(id);
@@ -43,7 +59,7 @@ namespace Gamified_learning.Controllers
             return CreatedAtAction(nameof(GetUser), new { id = user.UserId }, user);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateUser(int id, User user)
         {
             if (id == user.UserId)
@@ -59,7 +75,7 @@ namespace Gamified_learning.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
             var user = await _dbContext.Users.FindAsync(id);
@@ -79,7 +95,7 @@ namespace Gamified_learning.Controllers
             return await _dbContext.Users.OrderByDescending(u => u.Xp).Take(10).ToListAsync();
         }
 
-        [HttpGet("{id}/profile")]
+        [HttpGet("{id:int}/profile")]
         public async Task<ActionResult> GetUserProfile(int id)
         {
             var user = await _dbContext.Users.FindAsync(id);

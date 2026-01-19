@@ -27,7 +27,13 @@ export default function LoginPage(){
             }
 
             const data = await res.json();
+
+            localStorage.setItem("token", data.token)
+            localStorage.setItem("username", data.username)
+
+            
             console.log("Login successful ", data);
+            router.push('/')
         } catch (err: unknown) { 
         if (err instanceof Error) {
             setError(err.message);
@@ -67,7 +73,7 @@ export default function LoginPage(){
             </div>
 
             <div>
-                <button type="submit" onClick={()=>router.push('/')} className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Sign in</button>
+                <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Sign in</button>
             </div>
             </form>
 

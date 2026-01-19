@@ -6,6 +6,12 @@ using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
 using System;
 using System.Text.RegularExpressions;
+using System.Security.Claims; // Claim and ClaimTypes
+using Microsoft.AspNetCore.Authentication.JwtBearer; 
+using System.Text; // Encoding
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+
 namespace Gamified_learning.Controllers
 {
     
@@ -15,9 +21,12 @@ namespace Gamified_learning.Controllers
     {
         private readonly AppDbContext _context;
 
-        public AuthController(AppDbContext context)
+        private readonly IConfiguration _configuration;
+
+       public AuthController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpPost("register")]
@@ -62,14 +71,30 @@ namespace Gamified_learning.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            var user = await _context.Users.FirstAsync(u => u.Email == loginRequest.Email);
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginRequest.Email);
+
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginRequest.Password, user.Password))
             {
                 Console.WriteLine("Invalid credentials");
                 return Unauthorized("Invalid credentials");
             }
             Console.WriteLine("Logged in");
-            return Ok(new {message = "Logged in successfully", user.Username, user.Email,  user.Xp,  user.Level});
+
+            var claims = new List<Claim> {
+                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+                new Claim(ClaimTypes.Name, user.Email),
+            };
+            var jwtToken = new JwtSecurityToken(
+                claims: claims,
+                notBefore: DateTime.UtcNow,
+                expires: DateTime.UtcNow.AddDays(30),
+                signingCredentials: new SigningCredentials(
+                    new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(_configuration["ApplicationSettings:JWT_Secret"])
+                        ),
+                    SecurityAlgorithms.HmacSha256Signature)
+            );
+            return Ok(new {message = "Logged in successfully", user.Username, user.Email,  user.Xp,  user.Level, token = new JwtSecurityTokenHandler().WriteToken(jwtToken)});
         }
         
         public static bool IsValidEmail(string email)

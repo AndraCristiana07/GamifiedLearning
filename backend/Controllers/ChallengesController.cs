@@ -263,6 +263,11 @@ namespace Gamified_learning.Controllers
                 { "stdin", stdin }
             };
 
+             Console.WriteLine("Language id: ", languageId);
+            Console.WriteLine("Source code: ", code);
+            
+            Console.WriteLine("stdin: ", stdin);
+        
             var jsonContent = JsonContent.Create(payload);
 
             await jsonContent.LoadIntoBufferAsync(); // avoid chunked encoding
@@ -275,6 +280,7 @@ namespace Gamified_learning.Controllers
                 return null;
 
             var result = await response.Content.ReadFromJsonAsync<CodeExecutionResult>();
+            Console.WriteLine("output: ", result);
 
             return new ExecutionResult
             {

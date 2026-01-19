@@ -32,6 +32,11 @@ public class ExecuteCodeController : ControllerBase
             { "stdin", req.Stdin }
         };
 
+        Console.WriteLine("Language id: ", languageId);
+        Console.WriteLine("Source code: ", req.Answer);
+        
+        Console.WriteLine("stdin: ", req.Stdin);
+        
         var jsonContent = JsonContent.Create(payload);
 
         await jsonContent.LoadIntoBufferAsync(); // avoid chunked encoding
@@ -45,6 +50,7 @@ public class ExecuteCodeController : ControllerBase
 
         var result = await response.Content.ReadFromJsonAsync<CodeExecutionResult>();
 
+        Console.WriteLine("result: ", result);
         return Ok(new
         {
             output = result?.Stdout
