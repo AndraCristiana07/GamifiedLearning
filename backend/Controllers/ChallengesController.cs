@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using Gamified_learning.Models;
+using Gamified_learning.Helpers;
 using Gamified_learning.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
@@ -200,7 +201,17 @@ namespace Gamified_learning.Controllers
 
                 foreach (var test in tests)
                 {
-                    var run = await ExecuteCode(request.Language, request.Answer, test.Input);
+                    string wrapper = request.Language switch
+                    {
+                        "python" => challenge.WrapperCodePython ?? "",
+                        "javascript" => challenge.WrapperCodeJavascript ?? "",
+                        "csharp" => challenge.WrapperCodeCsharp ?? "",
+                        "cpp" => challenge.WrapperCodeCpp ?? "",
+                        _ => ""
+                    };
+
+                    string finalAnswer = CodeAssemble.AssembleCode(request.Answer, wrapper);
+                    var run = await ExecuteCode(request.Language, finalAnswer, test.Input);
 
                     if (run == null)
                         return BadRequest(new { message = "Code execution failed." });
@@ -263,7 +274,7 @@ namespace Gamified_learning.Controllers
                 { "stdin", stdin }
             };
 
-             Console.WriteLine("Language id: ", languageId);
+            Console.WriteLine("Language id: ", languageId);
             Console.WriteLine("Source code: ", code);
             
             Console.WriteLine("stdin: ", stdin);
@@ -420,6 +431,11 @@ namespace Gamified_learning.Controllers
                 "javascript" => Ok(c.SkelCodeJavascript),
                 "cpp" => Ok(c.SkelCodeCpp),
                 _ => BadRequest("Unsupported language")
+                // "python" => Ok(c.WrapperCodePython),
+                // "csharp" => Ok(c.WrapperCodeCsharp),
+                // "javascript" => Ok(c.WrapperCodeJavascript),
+                // "cpp" => Ok(c.WrapperCodeCpp),
+                // _ => BadRequest("Unsupported language")
             };
         }
 

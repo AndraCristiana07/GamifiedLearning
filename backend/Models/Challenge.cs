@@ -19,11 +19,16 @@ namespace Gamified_learning.Models
 
         public string? TagsJson { get; set; }
 
+        // what users see
         public string? SkelCodePython { get; set; }
         public string? SkelCodeJavascript { get; set; }
         public string? SkelCodeCpp { get; set; }
         public string? SkelCodeCsharp { get; set; }
         
-        
+        // hidden wrapper
+        public string? WrapperCodePython { get; set; }
+        public string? WrapperCodeJavascript { get; set; }
+        public string? WrapperCodeCpp { get; set; }
+        public string? WrapperCodeCsharp { get; set; }
     }
 }
