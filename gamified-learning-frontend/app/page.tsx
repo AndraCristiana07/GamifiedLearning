@@ -76,7 +76,6 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -135,13 +134,13 @@ export default function Home() {
   if (!user) return <p className="text-white p-6">Loading...</p>;
 
   return (
-     <><LogoutModal
+    <><LogoutModal
       open={showLogoutModal}
       onCancel={() => setShowLogoutModal(false)}
       onConfirm={() => {
         setShowLogoutModal(false);
         loggingOut();
-      } } /><div className="relative p-6 text-white space-y-12">
+      }} /><div className="relative p-6 text-white space-y-12">
 
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -153,32 +152,34 @@ export default function Home() {
               Welcome back, <span className="text-indigo-400">{user.username}</span>
             </h1>
 
-            {user ? (
+            <div className="flex gap-6 items-center">
+              {user ? (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className="cursor-pointer text-2xl font-semibold"
+                  onClick={() => setShowLogoutModal(true)}
+                >
+                  Logout
+                </motion.div>
+
+              ) : (
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  className="cursor-pointer text-2xl font-semibold"
+                  onClick={() => router.push(`/login`)}
+
+                >
+                  Login
+                </motion.div>
+              )}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 className="cursor-pointer text-2xl font-semibold"
-                onClick={() => setShowLogoutModal(true)}
+                onClick={() => router.push(`/profile`)}
               >
-                Logout
+                Profile
               </motion.div>
-
-            ) : (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                className="cursor-pointer text-2xl font-semibold"
-                onClick={() => router.push(`/login`)}
-
-              >
-                Login
-              </motion.div>
-            )}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="cursor-pointer text-2xl font-semibold"
-              onClick={() => router.push(`/profile`)}
-            >
-              Profile
-            </motion.div>
+            </div>
           </div>
           <p className="text-gray-300 mt-2">
             Level {user.level} • {user.xp} XP

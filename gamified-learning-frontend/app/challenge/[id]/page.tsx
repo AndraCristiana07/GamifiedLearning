@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+
 import Editor from "@monaco-editor/react";
 
 interface TestCase {
@@ -46,6 +48,8 @@ export default function ChallengePage() {
 
   const [hints, setHints] = useState<string[]>([]);
   const [hintMessage, setHintMessage] = useState<string | null>(null);
+
+  const router = useRouter();
 
   function getEditorStorage(
     challengeId: string | number,
@@ -123,7 +127,7 @@ export default function ChallengePage() {
       setRunning(false)
       return
     }
-    
+
     for (const tc of testCases) {
       const res = await fetch("http://localhost:5180/api/code/execute", {
         method: "POST",
@@ -193,110 +197,112 @@ export default function ChallengePage() {
   if (!challenge) return <p className="text-white">Loading...</p>;
 
   return (
-    <div className="p-6 text-white max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4">{challenge.title}</h1>
-      <p className="text-gray-300 mb-6 whitespace-pre-line">{challenge.question}</p>
-      <button
-        onClick={handleShowHint}
-        className="mt-4 bg-yellow-600 px-4 py-2 rounded font-semibold"
-      >
-        Show Hint (-{challenge.hintPenalty} XP)
-      </button>
-      {challenge.type === "Text" && (
-        <div>
-          <input
-            type="text"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            className="w-full p-2 rounded bg-gray-800 text-white"
-            placeholder="Your answer"
-          />
+    <>
+      <div className="p-6 bg-gray-800 text-white flex justify-between items-center">
+        <button className="font-semibold" onClick={() => router.push('/')}>
+          Home
+        </button>
+      </div><div className="p-6 text-white max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-4">{challenge.title}</h1>
+        <p className="text-gray-300 mb-6 whitespace-pre-line">{challenge.question}</p>
+        <button
+          onClick={handleShowHint}
+          className="mt-4 bg-yellow-600 px-4 py-2 rounded font-semibold"
+        >
+          Show Hint (-{challenge.hintPenalty} XP)
+        </button>
+        {challenge.type === "Text" && (
+          <div>
+            <input
+              type="text"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              className="w-full p-2 rounded bg-gray-800 text-white"
+              placeholder="Your answer" />
 
-          <button
-            onClick={handleSubmit}
-            className="mt-4 bg-indigo-500 hover:bg-indigo-400 px-4 py-2 rounded font-semibold"
-          >
-            Submit Answer
-          </button>
+            <button
+              onClick={handleSubmit}
+              className="mt-4 bg-indigo-500 hover:bg-indigo-400 px-4 py-2 rounded font-semibold"
+            >
+              Submit Answer
+            </button>
 
-          {submitMessage && (
-            <p className="mt-3 text-lg">{submitMessage}</p>
-          )}
-        </div>
-      )}
+            {submitMessage && (
+              <p className="mt-3 text-lg">{submitMessage}</p>
+            )}
+          </div>
+        )}
 
-      {challenge.type === "Code" && (
-        <div>
-          <label>Language: </label>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value as Language)}
-            className="bg-gray-800 p-2 rounded ml-2 mb-4"
-          >
-            <option value="python">Python</option>
-            <option value="javascript">JavaScript</option>
-            <option value="csharp">C#</option>
-            <option value="cpp">C++</option>
-          </select>
+        {challenge.type === "Code" && (
+          <div>
+            <label>Language: </label>
+            <select
+              value={language}
+              onChange={(e) => setLanguage(e.target.value as Language)}
+              className="bg-gray-800 p-2 rounded ml-2 mb-4"
+            >
+              <option value="python">Python</option>
+              <option value="javascript">JavaScript</option>
+              <option value="csharp">C#</option>
+              <option value="cpp">C++</option>
+            </select>
 
-          <Editor
-            height="400px"
-            language={language}
-            value={answer}
-            defaultValue=""
-            onChange={handleEditorChange}
-            theme="vs-dark"
-          />
+            <Editor
+              height="400px"
+              language={language}
+              value={answer}
+              defaultValue=""
+              onChange={handleEditorChange}
+              theme="vs-dark" />
 
-          <button
-            disabled={running}
-            onClick={handleRunTests}
-            className="mt-4 bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded font-semibold mr-3"
-          >
-            {running ? "Running..." : "Run Tests"}
-          </button>
+            <button
+              disabled={running}
+              onClick={handleRunTests}
+              className="mt-4 bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded font-semibold mr-3"
+            >
+              {running ? "Running..." : "Run Tests"}
+            </button>
 
-          <button
-            onClick={handleSubmit}
-            className="mt-4 bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-semibold"
-          >
-            Submit
-          </button>
-          {hints.length > 0 && (
-            <div className="mt-4 p-3 bg-gray-700 rounded">
-              <h3 className="text-lg font-bold">Hints</h3>
-              {hints.map((h, i) => (
-                <p key={i} className="mt-2 text-yellow-300">{h}</p>
-              ))}
-            </div>
-          )}
+            <button
+              onClick={handleSubmit}
+              className="mt-4 bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-semibold"
+            >
+              Submit
+            </button>
+            {hints.length > 0 && (
+              <div className="mt-4 p-3 bg-gray-700 rounded">
+                <h3 className="text-lg font-bold">Hints</h3>
+                {hints.map((h, i) => (
+                  <p key={i} className="mt-2 text-yellow-300">{h}</p>
+                ))}
+              </div>
+            )}
 
-          {hintMessage && <p className="mt-3">{hintMessage}</p>}
+            {hintMessage && <p className="mt-3">{hintMessage}</p>}
 
-          {runResults.length > 0 && (
-            <div className="mt-6">
-              <h2 className="text-xl font-semibold mb-3">Test results</h2>
+            {runResults.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-xl font-semibold mb-3">Test results</h2>
 
-              {runResults.map((r, index) => (
-                <div
-                  key={index}
-                  className={`p-3 mb-2 rounded ${r.passed ? "bg-green-800" : "bg-red-800"
-                    }`}
-                >
-                  <p><strong>Input:</strong> {r.input}</p>
-                  <p><strong>Expected:</strong> {r.expected}</p>
-                  <p><strong>Output:</strong> {r.output}</p>
-                  <p><strong>Status:</strong> {r.passed ? "PASSED" : "FAILED"}</p>
-                </div>
-              ))}
-            </div>
-          )}
+                {runResults.map((r, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 mb-2 rounded ${r.passed ? "bg-green-800" : "bg-red-800"}`}
+                  >
+                    <p><strong>Input:</strong> {r.input}</p>
+                    <p><strong>Expected:</strong> {r.expected}</p>
+                    <p><strong>Output:</strong> {r.output}</p>
+                    <p><strong>Status:</strong> {r.passed ? "PASSED" : "FAILED"}</p>
+                  </div>
+                ))}
+              </div>
+            )}
 
-          {submitMessage && (
-            <p className="mt-4 text-lg">{submitMessage}</p>
-          )}
-        </div>
-      )}
-    </div>
+            {submitMessage && (
+              <p className="mt-4 text-lg">{submitMessage}</p>
+            )}
+          </div>
+        )}
+      </div></>
   );
 }
