@@ -91,7 +91,7 @@ export default function CategoryPage() {
                                 </div>
                             ) : (
                                 <button
-                                    onClick={() => router.push(`/challenge/${c.challengeId}`)}
+                                    onClick={() => router.push(`/challenge/${c.challengeId}?category=${encodeURIComponent(category as string)}`)}
                                     className="mt-3 bg-indigo-500 hover:bg-indigo-400 text-white px-3 py-1 rounded"
                                 >
                                     Start Challenge

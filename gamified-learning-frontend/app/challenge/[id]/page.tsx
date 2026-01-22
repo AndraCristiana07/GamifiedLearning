@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-
+import { useSearchParams } from "next/navigation";
 import Editor from "@monaco-editor/react";
 
 interface TestCase {
@@ -50,6 +50,11 @@ export default function ChallengePage() {
   const [hintMessage, setHintMessage] = useState<string | null>(null);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // const codeLanguage = category as string;
+  const langParam = searchParams.get("category")?.toLowerCase() as Language | null;
+  const isLanguageLocked = !!langParam;
+
 
   function getEditorStorage(
     challengeId: string | number,
@@ -57,6 +62,13 @@ export default function ChallengePage() {
   ) {
     return `challenge:${challengeId}:lang:${language}:code`
   }
+
+  useEffect(() => {
+    if (langParam) {
+      setLanguage(langParam);
+    }
+  }, [langParam])
+
   useEffect(() => {
     if (!id || !language) return;
 
@@ -236,17 +248,20 @@ export default function ChallengePage() {
         {challenge.type === "Code" && (
           <div>
             <label>Language: </label>
-            <select
-              value={language}
-              onChange={(e) => setLanguage(e.target.value as Language)}
-              className="bg-gray-800 p-2 rounded ml-2 mb-4"
-            >
-              <option value="python">Python</option>
-              <option value="javascript">JavaScript</option>
-              <option value="csharp">C#</option>
-              <option value="cpp">C++</option>
-            </select>
-
+            {isLanguageLocked ? (
+              <span className="ml-2">{langParam.charAt(0).toUpperCase() + String(langParam).slice(1)}</span>
+            ) : (
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value as Language)}
+                className="bg-gray-800 p-2 rounded ml-2 mb-4"
+              >
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="csharp">C#</option>
+                <option value="cpp">C++</option>
+              </select>
+            )}
             <Editor
               height="400px"
               language={language}

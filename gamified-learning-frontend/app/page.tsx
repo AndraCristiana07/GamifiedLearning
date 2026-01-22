@@ -107,7 +107,7 @@ export default function Home() {
       }
     })
       .then((res) => {
-        if (!res.ok) throw new Error("Unauthorize")
+        if (!res.ok) router.push("/login");
         return res.json()
       })
       .then(setUser);
