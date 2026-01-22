@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 import Editor from "@monaco-editor/react";
-
+import CodeHistoryModal from "@/components/codeHistoryModal";
 interface TestCase {
   Input: string;
   Expected: string;
@@ -32,6 +32,14 @@ interface RunResult {
   passed: boolean;
 }
 
+type HistoryTag = "AutoSave" | "RunTests" | "Submit";
+
+interface CodeHistoryEntry {
+  code: string;
+  timestamp: string;
+  tag: HistoryTag;
+}
+
 type Language = "python" | "csharp" | "javascript" | "cpp";
 
 export default function ChallengePage() {
@@ -48,20 +56,52 @@ export default function ChallengePage() {
 
   const [hints, setHints] = useState<string[]>([]);
   const [hintMessage, setHintMessage] = useState<string | null>(null);
+  const [history, setHistory] = useState<CodeHistoryEntry[]>([]);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  // const codeLanguage = category as string;
   const langParam = searchParams.get("category")?.toLowerCase() as Language | null;
   const isLanguageLocked = !!langParam;
 
+  const saveHistory = (code: string, tag: HistoryTag) => {
+    if (!id || !code) return;
+    const historyKey = `challenge:${id}:language:${language}:history`;
+    const existing: CodeHistoryEntry[] = JSON.parse(localStorage.getItem(historyKey) || "[]");
+    if (existing.length > 0 && existing[existing.length - 1].code === code) {
+      return;
+    }
+    const newEntry: CodeHistoryEntry = {
+      code,
+      timestamp: new Date().toISOString(),
+      tag
+    };
+    const updated = [...existing, newEntry].slice(-20); // keep only last 20 entries
+    localStorage.setItem(historyKey, JSON.stringify(updated));
+    setHistory(updated);
+  }
+
+  useEffect(() => {
+    if (!id) return;
+    const historyKey = `challenge:${id}:language:${language}:history`;
+    const existing: CodeHistoryEntry[] = JSON.parse(localStorage.getItem(historyKey) || "[]");
+    setHistory(existing);
+  }, [id, language]);
 
   function getEditorStorage(
     challengeId: string | number,
     language: string
   ) {
-    return `challenge:${challengeId}:lang:${language}:code`
+    return `challenge:${challengeId}:language:${language}:code`
   }
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      saveHistory(answer, "AutoSave");
+    }, 2000); // autosave every 2 seconds after user stops typing
+
+    return () => clearTimeout(timeout);
+  }, [answer]);
 
   useEffect(() => {
     if (langParam) {
@@ -119,6 +159,7 @@ export default function ChallengePage() {
 
   async function handleRunTests() {
     if (!testCases.length) return;
+    saveHistory(answer, "RunTests");
 
 
     setRunning(true);
@@ -171,6 +212,8 @@ export default function ChallengePage() {
 
 
   async function handleSubmit() {
+    saveHistory(answer, "Submit");
+
     setSubmitMessage(null);
 
     if (!answer.trim()) {
@@ -210,8 +253,20 @@ export default function ChallengePage() {
 
   return (
     <>
+      <CodeHistoryModal
+        open={showHistoryModal}
+        history={history}
+        setAnswer={setAnswer}
+        clearHistory={() => {
+          if (!id) return;
+          const historyKey = `challenge:${id}:language:${language}:history`;
+          localStorage.removeItem(historyKey);
+          setHistory([]);
+        }}
+        onClose={() => setShowHistoryModal(false)}
+      />
       <div className="p-6 bg-gray-800 text-white flex justify-between items-center">
-        <button className="font-semibold" onClick={() => router.push('/')}>
+        <button className="font-semibold cursor-pointer" onClick={() => router.push('/')}>
           Home
         </button>
       </div><div className="p-6 text-white max-w-3xl mx-auto">
@@ -219,7 +274,7 @@ export default function ChallengePage() {
         <p className="text-gray-300 mb-6 whitespace-pre-line">{challenge.question}</p>
         <button
           onClick={handleShowHint}
-          className="mt-4 bg-yellow-600 px-4 py-2 rounded font-semibold"
+          className="mt-4 bg-yellow-600 hover:bg-yellow-500 px-4 py-2 rounded font-semibold cursor-pointer mb-4"
         >
           Show Hint (-{challenge.hintPenalty} XP)
         </button>
@@ -247,21 +302,27 @@ export default function ChallengePage() {
 
         {challenge.type === "Code" && (
           <div>
-            <label>Language: </label>
-            {isLanguageLocked ? (
-              <span className="ml-2">{langParam.charAt(0).toUpperCase() + String(langParam).slice(1)}</span>
-            ) : (
-              <select
-                value={language}
-                onChange={(e) => setLanguage(e.target.value as Language)}
-                className="bg-gray-800 p-2 rounded ml-2 mb-4"
-              >
-                <option value="python">Python</option>
-                <option value="javascript">JavaScript</option>
-                <option value="csharp">C#</option>
-                <option value="cpp">C++</option>
-              </select>
-            )}
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <label>Language: </label>
+                {isLanguageLocked ? (
+                  <span className="ml-2">{langParam.charAt(0).toUpperCase() + String(langParam).slice(1)}</span>
+                ) : (
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value as Language)}
+                    className="bg-gray-800 hover:bg-gray-700 p-2 rounded cursor-pointer"
+                  >
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="csharp">C#</option>
+                    <option value="cpp">C++</option>
+                  </select>
+                )}
+              </div>
+              <button className="ml-4 bg-gray-700 hover:bg-gray-600 p-2 rounded font-semibold cursor-pointer flex flex-end"
+                onClick={() => setShowHistoryModal(true)}>History</button>
+            </div>
             <Editor
               height="400px"
               language={language}
@@ -273,14 +334,14 @@ export default function ChallengePage() {
             <button
               disabled={running}
               onClick={handleRunTests}
-              className="mt-4 bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded font-semibold mr-3"
+              className="mt-4 bg-blue-500 hover:bg-blue-400 px-4 py-2 rounded font-semibold mr-3 cursor-pointer"
             >
               {running ? "Running..." : "Run Tests"}
             </button>
 
             <button
               onClick={handleSubmit}
-              className="mt-4 bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-semibold"
+              className="mt-4 bg-green-600 hover:bg-green-500 px-4 py-2 rounded font-semibold cursor-pointer"
             >
               Submit
             </button>
