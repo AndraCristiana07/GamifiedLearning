@@ -64,6 +64,13 @@ export default function ChallengePage() {
   const langParam = searchParams.get("category")?.toLowerCase() as Language | null;
   const isLanguageLocked = !!langParam;
 
+  const restoreCodeSkeleton = async (language: Language) => {
+    if (!id) return;
+    const res = await fetch(`http://localhost:5180/api/challenges/${id}/skel/${language}`);
+    const codeSkel = await res.text();
+    setAnswer(codeSkel);
+  };
+
   const saveHistory = (code: string, tag: HistoryTag) => {
     if (!id || !code) return;
     const historyKey = `challenge:${id}:language:${language}:history`;
@@ -320,8 +327,14 @@ export default function ChallengePage() {
                   </select>
                 )}
               </div>
-              <button className="ml-4 bg-gray-700 hover:bg-gray-600 p-2 rounded font-semibold cursor-pointer flex flex-end"
+              <div className="flex flex-end">
+              <button onClick={() => restoreCodeSkeleton(language)}
+                className="bg-gray-700 hover:bg-gray-600 p-2 rounded font-semibold cursor-pointer">
+                Restore Code Skeleton
+              </button>
+              <button className="ml-4 bg-gray-700 hover:bg-gray-600 p-2 rounded font-semibold cursor-pointer "
                 onClick={() => setShowHistoryModal(true)}>History</button>
+              </div>
             </div>
             <Editor
               height="400px"
