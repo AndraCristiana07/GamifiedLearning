@@ -35,6 +35,7 @@ interface RunResult {
 type HistoryTag = "AutoSave" | "RunTests" | "Submit";
 
 interface CodeHistoryEntry {
+  id: string;
   code: string;
   timestamp: string;
   tag: HistoryTag;
@@ -79,6 +80,7 @@ export default function ChallengePage() {
       return;
     }
     const newEntry: CodeHistoryEntry = {
+      id: crypto.randomUUID(),
       code,
       timestamp: new Date().toISOString(),
       tag
@@ -263,6 +265,7 @@ export default function ChallengePage() {
       <CodeHistoryModal
         open={showHistoryModal}
         history={history}
+        language={language}
         setAnswer={setAnswer}
         clearHistory={() => {
           if (!id) return;
