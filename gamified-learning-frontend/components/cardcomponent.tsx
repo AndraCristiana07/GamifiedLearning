@@ -52,7 +52,7 @@ interface CardProps {
     i: number
 }
 
-export default function CategoryCard({ category, hueA, hueB, i }: CardProps) {
+export default function CategoryCard({ category, hueA, hueB }: CardProps) {
     const background = `linear-gradient(306deg, ${hue(hueA)}, ${hue(hueB)})`;
     console.log(category)
     return (

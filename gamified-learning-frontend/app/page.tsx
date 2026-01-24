@@ -43,7 +43,7 @@ export default function Home() {
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const router = useRouter();
 
-  const specificHues: { [key: string]: any } = {
+  const specificHues: { [key: string]: { hueA: number, hueB: number } } = {
     'Python': { hueA: 180, hueB: 280 },
     'Cpp': { hueA: 260, hueB: 360 },
     'CSharp': { hueA: 340, hueB: 50 },
@@ -121,7 +121,7 @@ export default function Home() {
       .then(setCategories);
 
 
-  }, []);
+  }, [router]);
 
   function handleRandomChallenge() {
     if (randomChallenge) {

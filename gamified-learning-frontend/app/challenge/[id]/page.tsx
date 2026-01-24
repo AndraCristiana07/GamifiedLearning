@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
@@ -72,7 +72,7 @@ export default function ChallengePage() {
     setAnswer(codeSkel);
   };
 
-  const saveHistory = (code: string, tag: HistoryTag) => {
+  const saveHistory = useCallback((code: string, tag: HistoryTag) => {
     if (!id || !code) return;
     const historyKey = `challenge:${id}:language:${language}:history`;
     const existing: CodeHistoryEntry[] = JSON.parse(localStorage.getItem(historyKey) || "[]");
@@ -88,7 +88,7 @@ export default function ChallengePage() {
     const updated = [...existing, newEntry].slice(-20); // keep only last 20 entries
     localStorage.setItem(historyKey, JSON.stringify(updated));
     setHistory(updated);
-  }
+  } , [id, language]);
 
   useEffect(() => {
     if (!id) return;
@@ -130,7 +130,7 @@ export default function ChallengePage() {
     fetch(`http://localhost:5180/api/challenges/${id}/skel/${language}`)
       .then(r => r.text())
       .then(code => setAnswer(code));
-    console.log("code skel: ", answer)
+    // console.log("code skel: ", answer)
   }, [language, id])
 
   useEffect(() => {

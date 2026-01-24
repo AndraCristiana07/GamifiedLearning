@@ -47,6 +47,7 @@ export default function LoginPage(){
     return (
     <div>
       <h1>Login</h1>
+      {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
 
