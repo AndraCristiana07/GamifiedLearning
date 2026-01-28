@@ -81,6 +81,7 @@ export default function CategoryCard({ category, hueA, hueB }: CardProps) {
                 />
 
                 <motion.div
+                    // id={`category-card-${category}`}
                     variants={cardVariants}
                     style={{
                         ...card,

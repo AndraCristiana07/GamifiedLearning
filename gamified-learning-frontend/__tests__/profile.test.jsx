@@ -4,6 +4,17 @@ import ProfilePage from "../app/profile/page";
 
 global.fetch = jest.fn();
 
+jest.mock('next/navigation', () => ({
+    __esModule: true,
+    useRouter: () => ({
+        push: jest.fn(),
+        isFallback: false,
+    }),
+   
+    useEffect: () => {},
+
+}));
+
 describe("Profile Page", () => {
     beforeEach(() => {
         fetch.mockClear();

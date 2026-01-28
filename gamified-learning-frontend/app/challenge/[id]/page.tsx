@@ -285,6 +285,7 @@ export default function ChallengePage() {
         <button
           onClick={handleShowHint}
           className="mt-4 bg-yellow-600 hover:bg-yellow-500 px-4 py-2 rounded font-semibold cursor-pointer mb-4"
+          data-testid="show-hint"
         >
           Show Hint (-{challenge.hintPenalty} XP)
         </button>
@@ -316,10 +317,11 @@ export default function ChallengePage() {
               <div>
                 <label>Language: </label>
                 {isLanguageLocked ? (
-                  <span className="ml-2">{langParam.charAt(0).toUpperCase() + String(langParam).slice(1)}</span>
+                  <span data-testid="language-display" className="ml-2">{langParam.charAt(0).toUpperCase() + String(langParam).slice(1)}</span>
                 ) : (
                   <select
                     value={language}
+                    data-testid="language-select"
                     onChange={(e) => setLanguage(e.target.value as Language)}
                     className="bg-gray-800 hover:bg-gray-700 p-2 rounded cursor-pointer"
                   >
@@ -332,7 +334,8 @@ export default function ChallengePage() {
               </div>
               <div className="flex flex-end">
               <button onClick={() => restoreCodeSkeleton(language)}
-                className="bg-gray-700 hover:bg-gray-600 p-2 rounded font-semibold cursor-pointer">
+                className="bg-gray-700 hover:bg-gray-600 p-2 rounded font-semibold cursor-pointer"
+                data-testid="restore-skeleton">
                 Restore Code Skeleton
               </button>
               <button className="ml-4 bg-gray-700 hover:bg-gray-600 p-2 rounded font-semibold cursor-pointer "
@@ -384,7 +387,7 @@ export default function ChallengePage() {
                     <p><strong>Input:</strong> {r.input}</p>
                     <p><strong>Expected:</strong> {r.expected}</p>
                     <p><strong>Output:</strong> {r.output}</p>
-                    <p><strong>Status:</strong> {r.passed ? "PASSED" : "FAILED"}</p>
+                    <p data-testid="test-result"><strong>Status:</strong> {r.passed ? "PASSED" : "FAILED"}</p>
                   </div>
                 ))}
               </div>

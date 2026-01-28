@@ -155,6 +155,7 @@ export default function Home() {
             <div className="flex gap-6 items-center">
               {user ? (
                 <motion.div
+                  id="logout-button"
                   whileHover={{ scale: 1.05 }}
                   className="cursor-pointer text-2xl font-semibold"
                   onClick={() => setShowLogoutModal(true)}
@@ -222,6 +223,7 @@ export default function Home() {
             {coloredCategories.map(({ cat, hueA, hueB }, i) => (
               <div
                 key={cat}
+                data-testid={`category-card-${cat}`}
                 onClick={() => router.push(`/categories/${encodeURIComponent(cat)}`)}
                 className="cursor-pointer"
               >
