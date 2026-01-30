@@ -41,7 +41,8 @@ interface CodeHistoryEntry {
   tag: HistoryTag;
 }
 
-type Language = "python" | "csharp" | "javascript" | "cpp";
+// type Language = "python" | "csharp" | "javascript" | "cpp";
+type Language = "python" | "csharp" | "cpp";
 
 export default function ChallengePage() {
   const { id } = useParams();
@@ -326,7 +327,7 @@ export default function ChallengePage() {
                     className="bg-gray-800 hover:bg-gray-700 p-2 rounded cursor-pointer"
                   >
                     <option value="python">Python</option>
-                    <option value="javascript">JavaScript</option>
+                    {/* <option value="javascript">JavaScript</option> */}
                     <option value="csharp">C#</option>
                     <option value="cpp">C++</option>
                   </select>

@@ -192,7 +192,7 @@ describe('Challenge Page', () => {
             type: 'Code',
             xpGained: 10,
             hintPenalty: 5,
-            supportedLanguages: ['python', 'javascript']
+            category: 'Python'
           }),
         });
       }
@@ -209,8 +209,8 @@ describe('Challenge Page', () => {
     expect(await screen.findByText('What is 1 + 1?')).toBeInTheDocument();
 
     const languageSelect = screen.getByTestId('language-select');
-    fireEvent.change(languageSelect, { target: { value: 'javascript' } });
+    fireEvent.change(languageSelect, { target: { value: 'python' } });
 
-    expect(languageSelect.value).toBe('javascript');
+    expect(languageSelect.value).toBe('python');
   });
 });

@@ -47,7 +47,7 @@ export default function Home() {
     'Python': { hueA: 180, hueB: 280 },
     'Cpp': { hueA: 260, hueB: 360 },
     'CSharp': { hueA: 340, hueB: 50 },
-    'JavaScript': { hueA: 60, hueB: 160 },
+    // 'JavaScript': { hueA: 60, hueB: 160 },
 
   };
 
