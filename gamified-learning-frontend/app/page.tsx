@@ -33,6 +33,17 @@ interface Challenge {
   xpGained: number;
 }
 
+interface UserData {
+  username: string;
+  level: number;
+  xp: number;
+}
+
+interface LeaderboardUser {
+  userId: number;
+  username: string;
+  xp: number;
+}
 export default function Home() {
   const [user, setUser] = useState<UserData | null>(null);
   const [recent, setRecent] = useState<RecentEntry[]>([]);
