@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Gamified_learning.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer; // JwtBearerDefaults
+using Microsoft.IdentityModel.Tokens; // TokenValidationParameters
+using System.Text; // Encoding
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,27 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<Gamified_learning.Data.AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+// for JWT auth 
+builder.Services.AddAuthentication(cfg => {
+    cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    cfg.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x => {
+    x.RequireHttpsMetadata = false;
+    x.SaveToken = false;
+    x.TokenValidationParameters = new TokenValidationParameters {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8
+            .GetBytes(builder.Configuration["ApplicationSettings:JWT_Secret"])
+        ),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
@@ -21,9 +45,13 @@ builder.Services.AddCors(options =>
         }));
 
 builder.Services.AddOpenApiDocument();
+
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 app.UseCors("AllowAllOrigins");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

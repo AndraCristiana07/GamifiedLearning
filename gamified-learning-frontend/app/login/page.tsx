@@ -1,5 +1,6 @@
 "use client"
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage(){
 
@@ -7,6 +8,8 @@ export default function LoginPage(){
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
+
     const handleSubmit = async (e: React.FormEvent) =>{
         e.preventDefault();
         setError(null);
@@ -24,7 +27,13 @@ export default function LoginPage(){
             }
 
             const data = await res.json();
+
+            localStorage.setItem("token", data.token)
+            localStorage.setItem("username", data.username)
+
+            
             console.log("Login successful ", data);
+            router.push('/')
         } catch (err: unknown) { 
         if (err instanceof Error) {
             setError(err.message);
@@ -38,6 +47,7 @@ export default function LoginPage(){
     return (
     <div>
       <h1>Login</h1>
+      {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
 
@@ -68,7 +78,7 @@ export default function LoginPage(){
             </div>
             </form>
 
-            <p className="mt-10 text-center text-sm/6 text-gray-400">
+            <p className="mt-10 text-center text-sm/6 text-gray-400" onClick={()=>router.push('register')}>
             Do not have an account? 
             <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300"> Register now!</a>
             </p>
